@@ -1,0 +1,147 @@
+import React, { useState } from 'react';
+import { X, ShoppingBag } from 'lucide-react';
+
+export default function EditServiceReqModal({ request, onClose, onSubmit }) {
+  const [formData, setFormData] = useState({
+    title: request.title || '',
+    category: request.category || 'Hardware Request',
+    requested_by: request.requested_by || '',
+    urgency: request.urgency || 'Medium',
+    approval_status: request.approval_status || 'Pending Approval',
+    status: request.status || 'Submitted'
+  });
+
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!formData.title.trim()) return;
+    setLoading(true);
+    try {
+      await onSubmit(request.id, formData);
+      onClose();
+    } catch (err) {
+      alert('Error updating service request: ' + err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="modal-overlay">
+      <div className="modal-content">
+        <div style={{
+          padding: '1rem 1.25rem',
+          borderBottom: '1px solid #e2e8f0',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 600, color: '#1e293b' }}>
+            <ShoppingBag size={18} color="#16a34a" />
+            <span>Edit Service Request ({request.request_number})</span>
+          </div>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#64748b' }}>
+            <X size={18} />
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit}>
+          <div style={{ padding: '1.25rem' }}>
+            <div className="form-group">
+              <label className="form-label">Request Title *</label>
+              <input
+                type="text"
+                className="form-input"
+                value={formData.title}
+                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                required
+              />
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+              <div className="form-group">
+                <label className="form-label">Category</label>
+                <select
+                  className="form-select"
+                  value={formData.category}
+                  onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                >
+                  <option value="Hardware Request">Hardware Request</option>
+                  <option value="Access Management">Access Management</option>
+                  <option value="Software License">Software License</option>
+                  <option value="General Service">General Service</option>
+                </select>
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Urgency</label>
+                <select
+                  className="form-select"
+                  value={formData.urgency}
+                  onChange={(e) => setFormData({ ...formData, urgency: e.target.value })}
+                >
+                  <option value="Low">Low</option>
+                  <option value="Medium">Medium</option>
+                  <option value="High">High</option>
+                </select>
+              </div>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+              <div className="form-group">
+                <label className="form-label">Approval Status</label>
+                <select
+                  className="form-select"
+                  value={formData.approval_status}
+                  onChange={(e) => setFormData({ ...formData, approval_status: e.target.value })}
+                >
+                  <option value="Pending Approval">Pending Approval</option>
+                  <option value="Approved">Approved</option>
+                  <option value="Rejected">Rejected</option>
+                </select>
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Fulfillment Status</label>
+                <select
+                  className="form-select"
+                  value={formData.status}
+                  onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+                >
+                  <option value="Submitted">Submitted</option>
+                  <option value="In Fulfillment">In Fulfillment</option>
+                  <option value="Fulfilled">Fulfilled</option>
+                  <option value="Cancelled">Cancelled</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="form-group">
+              <label className="form-label">Requested By</label>
+              <input
+                type="text"
+                className="form-input"
+                value={formData.requested_by}
+                onChange={(e) => setFormData({ ...formData, requested_by: e.target.value })}
+              />
+            </div>
+          </div>
+
+          <div style={{
+            padding: '0.75rem 1.25rem',
+            borderTop: '1px solid #e2e8f0',
+            display: 'flex',
+            justifyContent: 'flex-end',
+            gap: '0.5rem'
+          }}>
+            <button type="button" className="btn btn-secondary" onClick={onClose}>Cancel</button>
+            <button type="submit" className="btn btn-primary" disabled={loading}>
+              {loading ? 'Saving...' : 'Save Request'}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
