@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  # 1. MongoDB Database Container
+  mongo:
+    image: mongo:7.0
+    container_name: itsm-mongodb
+    restart: always
+    ports:
+      - "27019:27017" # Host: 27019 -> Container: 27017 (Avoids conflict with 27017, 27018)
+    environment:
+      MONGO_INITDB_DATABASE: itsm_db
+    volumes:
+      - mongo_data:/data/db
+
+  # 2. Mongo Express Web Management UI Container
+  mongo-express:
+    image: mongo-express:latest
+    container_name: itsm-mongo-express
+    restart: always
+    ports:
+      - "8085:8081" # Host: 8085 -> Container: 8081 (Avoids conflict with 8080, 8081, 8082, 8083)
+    environment:
+      ME_CONFIG_MONGODB_SERVER: mongo
+      ME_CONFIG_MONGODB_PORT: 27017
+      ME_CONFIG_MONGODB_ENABLE_ADMIN: "true"
+      ME_CONFIG_BASICAUTH_USERNAME: admin
+      ME_CONFIG_BASICAUTH_PASSWORD: pass
+    depends_on:
+      - mongo
+
+  # 3. Express Node.js Backend Container
+  backend:
+    build: ./backend
+    container_name: itsm-backend
+    restart: always
+    ports:
+      - "5005:5000" # Host: 5005 -> Container: 5000 (Avoids conflict with 5000, 5001, 5002)
+    environment:
+      - MONGODB_URI=mongodb://mongo:27017/itsm_db
+      - PORT=5000
+    depends_on:
+      - mongo
+
+  # 4. React Frontend Container
+  frontend:
+    build: ./frontend
+    container_name: itsm-frontend
+    restart: always
+    ports:
+      - "3005:80" # Host: 3005 -> Container: 80 (Avoids conflict with 3000, 3001, 5020)
+    depends_on:
+      - backend
+
+volumes:
+  mongo_data:
