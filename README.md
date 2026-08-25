@@ -111,5 +111,3 @@ To launch with Docker Compose:
 ```bash
 docker-compose up --build
 ```
-
-CI/CD test - Jenkins Poll SCM
