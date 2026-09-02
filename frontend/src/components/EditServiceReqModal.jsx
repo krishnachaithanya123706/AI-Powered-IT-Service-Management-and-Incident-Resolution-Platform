@@ -4,8 +4,8 @@ import { X, ShoppingBag } from 'lucide-react';
 export default function EditServiceReqModal({ request, onClose, onSubmit }) {
   const [formData, setFormData] = useState({
     title: request.title || '',
-    category: request.category || 'Hardware Request',
-    requested_by: request.requested_by || '',
+    category: request.category || 'General Service',
+    requested_by: request.requested_by || 'Employee User',
     urgency: request.urgency || 'Medium',
     approval_status: request.approval_status || 'Pending Approval',
     status: request.status || 'Submitted'
@@ -18,7 +18,7 @@ export default function EditServiceReqModal({ request, onClose, onSubmit }) {
     if (!formData.title.trim()) return;
     setLoading(true);
     try {
-      await onSubmit(request.id, formData);
+      await onSubmit(request._id || request.id, formData);
       onClose();
     } catch (err) {
       alert('Error updating service request: ' + err.message);
@@ -28,26 +28,20 @@ export default function EditServiceReqModal({ request, onClose, onSubmit }) {
   };
 
   return (
-    <div className="modal-overlay">
-      <div className="modal-content">
-        <div style={{
-          padding: '1rem 1.25rem',
-          borderBottom: '1px solid #e2e8f0',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between'
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 600, color: '#1e293b' }}>
-            <ShoppingBag size={18} color="#16a34a" />
-            <span>Edit Service Request ({request.request_number})</span>
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+        <div className="modal-header">
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+            <ShoppingBag size={18} color="var(--accent-emerald)" />
+            <h3 className="modal-title">Edit Request ({request.request_number})</h3>
           </div>
-          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#64748b' }}>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}>
             <X size={18} />
           </button>
         </div>
 
         <form onSubmit={handleSubmit}>
-          <div style={{ padding: '1.25rem' }}>
+          <div className="modal-body">
             <div className="form-group">
               <label className="form-label">Request Title *</label>
               <input
@@ -67,8 +61,8 @@ export default function EditServiceReqModal({ request, onClose, onSubmit }) {
                   value={formData.category}
                   onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                 >
-                  <option value="Hardware Request">Hardware Request</option>
                   <option value="Access Management">Access Management</option>
+                  <option value="Hardware Request">Hardware Request</option>
                   <option value="Software License">Software License</option>
                   <option value="General Service">General Service</option>
                 </select>
@@ -81,9 +75,9 @@ export default function EditServiceReqModal({ request, onClose, onSubmit }) {
                   value={formData.urgency}
                   onChange={(e) => setFormData({ ...formData, urgency: e.target.value })}
                 >
-                  <option value="Low">Low</option>
-                  <option value="Medium">Medium</option>
                   <option value="High">High</option>
+                  <option value="Medium">Medium</option>
+                  <option value="Low">Low</option>
                 </select>
               </div>
             </div>
@@ -112,7 +106,6 @@ export default function EditServiceReqModal({ request, onClose, onSubmit }) {
                   <option value="Submitted">Submitted</option>
                   <option value="In Fulfillment">In Fulfillment</option>
                   <option value="Fulfilled">Fulfilled</option>
-                  <option value="Cancelled">Cancelled</option>
                 </select>
               </div>
             </div>
@@ -128,16 +121,10 @@ export default function EditServiceReqModal({ request, onClose, onSubmit }) {
             </div>
           </div>
 
-          <div style={{
-            padding: '0.75rem 1.25rem',
-            borderTop: '1px solid #e2e8f0',
-            display: 'flex',
-            justifyContent: 'flex-end',
-            gap: '0.5rem'
-          }}>
+          <div className="modal-footer">
             <button type="button" className="btn btn-secondary" onClick={onClose}>Cancel</button>
             <button type="submit" className="btn btn-primary" disabled={loading}>
-              {loading ? 'Saving...' : 'Save Request'}
+              {loading ? 'Saving...' : 'Update Request'}
             </button>
           </div>
         </form>

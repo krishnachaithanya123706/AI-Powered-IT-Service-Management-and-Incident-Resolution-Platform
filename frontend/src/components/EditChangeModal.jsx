@@ -5,9 +5,9 @@ export default function EditChangeModal({ change, onClose, onSubmit }) {
   const [formData, setFormData] = useState({
     title: change.title || '',
     risk_level: change.risk_level || 'Medium',
-    cab_approval: change.cab_approval || 'Pending Review',
     implementation_date: change.implementation_date || new Date().toISOString().split('T')[0],
-    assigned_lead: change.assigned_lead || '',
+    assigned_lead: change.assigned_lead || 'Lead Architect',
+    cab_approval: change.cab_approval || 'Pending Review',
     status: change.status || 'Planning'
   });
 
@@ -18,36 +18,30 @@ export default function EditChangeModal({ change, onClose, onSubmit }) {
     if (!formData.title.trim()) return;
     setLoading(true);
     try {
-      await onSubmit(change.id, formData);
+      await onSubmit(change._id || change.id, formData);
       onClose();
     } catch (err) {
-      alert('Error updating change request: ' + err.message);
+      alert('Error updating RFC: ' + err.message);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="modal-overlay">
-      <div className="modal-content">
-        <div style={{
-          padding: '1rem 1.25rem',
-          borderBottom: '1px solid #e2e8f0',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between'
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 600, color: '#1e293b' }}>
-            <GitPullRequest size={18} color="#2563eb" />
-            <span>Edit Change Request RFC ({change.change_number})</span>
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+        <div className="modal-header">
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+            <GitPullRequest size={18} color="var(--accent-purple)" />
+            <h3 className="modal-title">Edit Change Request ({change.change_number})</h3>
           </div>
-          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#64748b' }}>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}>
             <X size={18} />
           </button>
         </div>
 
         <form onSubmit={handleSubmit}>
-          <div style={{ padding: '1.25rem' }}>
+          <div className="modal-body">
             <div className="form-group">
               <label className="form-label">RFC Title *</label>
               <input
@@ -61,20 +55,32 @@ export default function EditChangeModal({ change, onClose, onSubmit }) {
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
               <div className="form-group">
-                <label className="form-label">Risk Level</label>
+                <label className="form-label">Risk Assessment</label>
                 <select
                   className="form-select"
                   value={formData.risk_level}
                   onChange={(e) => setFormData({ ...formData, risk_level: e.target.value })}
                 >
-                  <option value="Low">Low</option>
-                  <option value="Medium">Medium</option>
-                  <option value="High">High</option>
+                  <option value="High">High Risk</option>
+                  <option value="Medium">Medium Risk</option>
+                  <option value="Low">Low Risk</option>
                 </select>
               </div>
 
               <div className="form-group">
-                <label className="form-label">CAB Approval</label>
+                <label className="form-label">Target Implementation Date</label>
+                <input
+                  type="date"
+                  className="form-input"
+                  value={formData.implementation_date}
+                  onChange={(e) => setFormData({ ...formData, implementation_date: e.target.value })}
+                />
+              </div>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+              <div className="form-group">
+                <label className="form-label">CAB Board Approval</label>
                 <select
                   className="form-select"
                   value={formData.cab_approval}
@@ -85,21 +91,9 @@ export default function EditChangeModal({ change, onClose, onSubmit }) {
                   <option value="Rejected">Rejected</option>
                 </select>
               </div>
-            </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
-              <div className="form-group">
-                <label className="form-label">Target Implementation Date</label>
-                <input
-                  type="date"
-                  className="form-input"
-                  value={formData.implementation_date}
-                  onChange={(e) => setFormData({ ...formData, implementation_date: e.target.value })}
-                />
-              </div>
 
               <div className="form-group">
-                <label className="form-label">RFC Status</label>
+                <label className="form-label">RFC Lifecycle Status</label>
                 <select
                   className="form-select"
                   value={formData.status}
@@ -109,7 +103,6 @@ export default function EditChangeModal({ change, onClose, onSubmit }) {
                   <option value="In Review">In Review</option>
                   <option value="Scheduled">Scheduled</option>
                   <option value="Completed">Completed</option>
-                  <option value="Rolled Back">Rolled Back</option>
                 </select>
               </div>
             </div>
@@ -125,16 +118,10 @@ export default function EditChangeModal({ change, onClose, onSubmit }) {
             </div>
           </div>
 
-          <div style={{
-            padding: '0.75rem 1.25rem',
-            borderTop: '1px solid #e2e8f0',
-            display: 'flex',
-            justifyContent: 'flex-end',
-            gap: '0.5rem'
-          }}>
+          <div className="modal-footer">
             <button type="button" className="btn btn-secondary" onClick={onClose}>Cancel</button>
             <button type="submit" className="btn btn-primary" disabled={loading}>
-              {loading ? 'Saving...' : 'Save RFC'}
+              {loading ? 'Saving...' : 'Update RFC'}
             </button>
           </div>
         </form>

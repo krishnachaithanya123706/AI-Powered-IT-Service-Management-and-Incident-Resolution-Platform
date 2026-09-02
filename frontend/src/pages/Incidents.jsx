@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { api } from '../services/api';
-import { Plus, Search, Edit2, Trash2, Eye } from 'lucide-react';
+import { Plus, Search, Edit2, Trash2, Eye, AlertOctagon } from 'lucide-react';
 import EditIncidentModal from '../components/EditIncidentModal';
 import ConfirmDeleteModal from '../components/ConfirmDeleteModal';
 
@@ -41,7 +41,7 @@ export default function Incidents({ onSelectIncident, onOpenNewIncident, onMetri
     if (!deletingIncident) return;
     setDeleteLoading(true);
     try {
-      await api.deleteIncident(deletingIncident.id);
+      await api.deleteIncident(deletingIncident._id || deletingIncident.id);
       setDeletingIncident(null);
       await loadIncidents();
       if (onMetricsUpdate) onMetricsUpdate();
@@ -64,137 +64,133 @@ export default function Incidents({ onSelectIncident, onOpenNewIncident, onMetri
 
   return (
     <div className="page-body">
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem' }}>
+      <div className="page-header">
         <div>
-          <h1 style={{ fontSize: '1.35rem', fontWeight: 700, color: '#1e293b' }}>
-            Incident Management
+          <h1 className="page-title">
+            <AlertOctagon size={24} color="var(--accent-rose)" />
+            <span>Incident Desk Management</span>
           </h1>
-          <p style={{ color: '#64748b', fontSize: '0.85rem' }}>
-            View, edit, track, and resolve IT service desk tickets
+          <p className="page-subtitle">
+            AI-driven auto-triaging, SLA tracking, and 1-click resolution playbooks.
           </p>
         </div>
         <button className="btn btn-primary" onClick={onOpenNewIncident}>
-          <Plus size={16} /> New Ticket
+          <Plus size={16} /> New Incident Ticket
         </button>
       </div>
 
       {/* Filter & Search Toolbar */}
-      <div className="basic-card" style={{ marginBottom: '1.25rem', padding: '0.85rem 1rem' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.75rem' }}>
-          <div style={{ position: 'relative', width: '280px' }}>
-            <Search size={16} color="#94a3b8" style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)' }} />
-            <input
-              type="text"
-              className="form-input"
-              placeholder="Search by ticket # or title..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              style={{ paddingLeft: '32px' }}
-            />
-          </div>
+      <div className="filter-bar">
+        <div style={{ position: 'relative', width: '320px' }}>
+          <Search size={16} color="var(--text-muted)" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
+          <input
+            type="text"
+            className="filter-input"
+            placeholder="Search by ticket # or title..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            style={{ paddingLeft: '36px', width: '100%' }}
+          />
+        </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <select
-              className="form-select"
-              style={{ width: '140px' }}
-              value={filters.status}
-              onChange={(e) => setFilters({ ...filters, status: e.target.value })}
-            >
-              <option value="All">All Statuses</option>
-              <option value="Open">Open</option>
-              <option value="In Progress">In Progress</option>
-              <option value="Resolved">Resolved</option>
-              <option value="Closed">Closed</option>
-            </select>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginLeft: 'auto' }}>
+          <select
+            className="form-select"
+            style={{ width: '150px' }}
+            value={filters.status}
+            onChange={(e) => setFilters({ ...filters, status: e.target.value })}
+          >
+            <option value="All">All Statuses</option>
+            <option value="Open">Open</option>
+            <option value="In Progress">In Progress</option>
+            <option value="Resolved">Resolved</option>
+            <option value="Closed">Closed</option>
+          </select>
 
-            <select
-              className="form-select"
-              style={{ width: '140px' }}
-              value={filters.priority}
-              onChange={(e) => setFilters({ ...filters, priority: e.target.value })}
-            >
-              <option value="All">All Priorities</option>
-              <option value="P1">P1 - Critical</option>
-              <option value="P2">P2 - High</option>
-              <option value="P3">P3 - Medium</option>
-              <option value="P4">P4 - Low</option>
-            </select>
-          </div>
+          <select
+            className="form-select"
+            style={{ width: '150px' }}
+            value={filters.priority}
+            onChange={(e) => setFilters({ ...filters, priority: e.target.value })}
+          >
+            <option value="All">All Priorities</option>
+            <option value="P1">P1 - Critical</option>
+            <option value="P2">P2 - High</option>
+            <option value="P3">P3 - Medium</option>
+            <option value="P4">P4 - Low</option>
+          </select>
         </div>
       </div>
 
-      {/* Incident List */}
-      <div className="basic-card">
+      {/* Incident List Table */}
+      <div className="table-container">
         {loading ? (
-          <div style={{ padding: '1.5rem', textAlign: 'center', color: '#64748b' }}>Loading tickets...</div>
+          <div style={{ padding: '3rem', textAlign: 'center', color: 'var(--text-muted)' }}>Loading tickets...</div>
         ) : filtered.length === 0 ? (
-          <div style={{ padding: '2rem', textAlign: 'center', color: '#94a3b8' }}>
-            No tickets found matching your search.
+          <div style={{ padding: '3rem', textAlign: 'center', color: 'var(--text-muted)' }}>
+            No tickets found matching your search parameters.
           </div>
         ) : (
-          <div className="table-container">
-            <table className="simple-table">
-              <thead>
-                <tr>
-                  <th>Ticket ID</th>
-                  <th>Title</th>
-                  <th>Category</th>
-                  <th>Priority</th>
-                  <th>Assigned Team</th>
-                  <th>Status</th>
-                  <th>Actions</th>
+          <table className="simple-table">
+            <thead>
+              <tr>
+                <th>Ticket ID</th>
+                <th>Title</th>
+                <th>Category</th>
+                <th>Priority</th>
+                <th>Assigned Team</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filtered.map(inc => (
+                <tr key={inc._id || inc.id}>
+                  <td style={{ fontWeight: 700, color: 'var(--accent-cyan)' }}>{inc.ticket_number}</td>
+                  <td style={{ fontWeight: 600, color: '#ffffff' }}>{inc.title}</td>
+                  <td style={{ color: 'var(--text-secondary)' }}>{inc.category}</td>
+                  <td>
+                    <span className={`badge badge-${inc.priority ? inc.priority.toLowerCase() : 'p3'}`}>
+                      {inc.priority}
+                    </span>
+                  </td>
+                  <td style={{ color: 'var(--text-secondary)' }}>{inc.assigned_team || 'Tier-1 Desk'}</td>
+                  <td>
+                    <span className={`badge ${inc.status === 'Resolved' || inc.status === 'Closed' ? 'badge-healthy' : 'badge-open'}`}>
+                      {inc.status}
+                    </span>
+                  </td>
+                  <td>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                      <button
+                        className="btn btn-secondary btn-sm"
+                        title="View Details"
+                        onClick={() => onSelectIncident(inc)}
+                      >
+                        <Eye size={13} />
+                      </button>
+                      <button
+                        className="btn btn-secondary btn-sm"
+                        style={{ color: 'var(--accent-cyan)' }}
+                        title="Edit Ticket"
+                        onClick={() => setEditingIncident(inc)}
+                      >
+                        <Edit2 size={13} />
+                      </button>
+                      <button
+                        className="btn btn-secondary btn-sm"
+                        style={{ color: 'var(--accent-rose)' }}
+                        title="Delete Ticket"
+                        onClick={() => setDeletingIncident(inc)}
+                      >
+                        <Trash2 size={13} />
+                      </button>
+                    </div>
+                  </td>
                 </tr>
-              </thead>
-              <tbody>
-                {filtered.map(inc => (
-                  <tr key={inc.id}>
-                    <td style={{ fontWeight: 600, color: '#2563eb' }}>{inc.ticket_number}</td>
-                    <td style={{ fontWeight: 500 }}>{inc.title}</td>
-                    <td style={{ color: '#64748b' }}>{inc.category}</td>
-                    <td>
-                      <span className={`badge badge-${inc.priority ? inc.priority.toLowerCase() : 'p3'}`}>
-                        {inc.priority}
-                      </span>
-                    </td>
-                    <td style={{ color: '#475569' }}>{inc.assigned_team || 'Tier-1 Desk'}</td>
-                    <td>
-                      <span className={`badge ${inc.status === 'Resolved' || inc.status === 'Closed' ? 'badge-resolved' : 'badge-open'}`}>
-                        {inc.status}
-                      </span>
-                    </td>
-                    <td>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                        <button
-                          className="btn btn-secondary"
-                          style={{ padding: '0.2rem 0.5rem', fontSize: '0.75rem' }}
-                          title="View Details"
-                          onClick={() => onSelectIncident(inc)}
-                        >
-                          <Eye size={13} />
-                        </button>
-                        <button
-                          className="btn btn-secondary"
-                          style={{ padding: '0.2rem 0.5rem', fontSize: '0.75rem', color: '#2563eb' }}
-                          title="Edit Ticket"
-                          onClick={() => setEditingIncident(inc)}
-                        >
-                          <Edit2 size={13} />
-                        </button>
-                        <button
-                          className="btn btn-secondary"
-                          style={{ padding: '0.2rem 0.5rem', fontSize: '0.75rem', color: '#dc2626' }}
-                          title="Delete Ticket"
-                          onClick={() => setDeletingIncident(inc)}
-                        >
-                          <Trash2 size={13} />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+              ))}
+            </tbody>
+          </table>
         )}
       </div>
 

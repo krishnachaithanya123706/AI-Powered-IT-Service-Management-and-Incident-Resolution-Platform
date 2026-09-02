@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { X, Server } from 'lucide-react';
+import { X, Server, Plus } from 'lucide-react';
 
 export default function NewAssetModal({ onClose, onSubmit }) {
   const [formData, setFormData] = useState({
     name: '',
     type: 'Kubernetes Cluster',
     environment: 'Production',
-    ip_address: '10.0.4.15',
+    ip_address: '10.0.1.10',
     status: 'Healthy',
     cpu_usage: 25,
     memory_usage: 40
@@ -29,32 +29,26 @@ export default function NewAssetModal({ onClose, onSubmit }) {
   };
 
   return (
-    <div className="modal-overlay">
-      <div className="modal-content">
-        <div style={{
-          padding: '1rem 1.25rem',
-          borderBottom: '1px solid #e2e8f0',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between'
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 600, color: '#1e293b' }}>
-            <Server size={18} color="#2563eb" />
-            <span>Add New Infrastructure Asset</span>
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+        <div className="modal-header">
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+            <Server size={18} color="var(--accent-cyan)" />
+            <h3 className="modal-title">Add Infrastructure Asset</h3>
           </div>
-          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#64748b' }}>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}>
             <X size={18} />
           </button>
         </div>
 
         <form onSubmit={handleSubmit}>
-          <div style={{ padding: '1.25rem' }}>
+          <div className="modal-body">
             <div className="form-group">
-              <label className="form-label">Server / Node Name *</label>
+              <label className="form-label">Hostname / Asset Name *</label>
               <input
                 type="text"
                 className="form-input"
-                placeholder="e.g. prod-api-gateway-02"
+                placeholder="prod-api-us-east-02"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 required
@@ -74,7 +68,7 @@ export default function NewAssetModal({ onClose, onSubmit }) {
                   <option value="API Gateway">API Gateway</option>
                   <option value="In-Memory Cache">In-Memory Cache</option>
                   <option value="Auth Bridge">Auth Bridge</option>
-                  <option value="Load Balancer">Load Balancer</option>
+                  <option value="Virtual Machine">Virtual Machine</option>
                 </select>
               </div>
 
@@ -98,14 +92,14 @@ export default function NewAssetModal({ onClose, onSubmit }) {
                 <input
                   type="text"
                   className="form-input"
-                  placeholder="e.g. 10.0.4.15"
+                  placeholder="10.0.4.15"
                   value={formData.ip_address}
                   onChange={(e) => setFormData({ ...formData, ip_address: e.target.value })}
                 />
               </div>
 
               <div className="form-group">
-                <label className="form-label">Health Status</label>
+                <label className="form-label">Initial Health Status</label>
                 <select
                   className="form-select"
                   value={formData.status}
@@ -117,44 +111,13 @@ export default function NewAssetModal({ onClose, onSubmit }) {
                 </select>
               </div>
             </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
-              <div className="form-group">
-                <label className="form-label">CPU Usage (%)</label>
-                <input
-                  type="number"
-                  min="0"
-                  max="100"
-                  className="form-input"
-                  value={formData.cpu_usage}
-                  onChange={(e) => setFormData({ ...formData, cpu_usage: parseInt(e.target.value) || 0 })}
-                />
-              </div>
-
-              <div className="form-group">
-                <label className="form-label">Memory Usage (%)</label>
-                <input
-                  type="number"
-                  min="0"
-                  max="100"
-                  className="form-input"
-                  value={formData.memory_usage}
-                  onChange={(e) => setFormData({ ...formData, memory_usage: parseInt(e.target.value) || 0 })}
-                />
-              </div>
-            </div>
           </div>
 
-          <div style={{
-            padding: '0.75rem 1.25rem',
-            borderTop: '1px solid #e2e8f0',
-            display: 'flex',
-            justifyContent: 'flex-end',
-            gap: '0.5rem'
-          }}>
+          <div className="modal-footer">
             <button type="button" className="btn btn-secondary" onClick={onClose}>Cancel</button>
             <button type="submit" className="btn btn-primary" disabled={loading}>
-              {loading ? 'Adding...' : 'Add Asset'}
+              <Plus size={16} />
+              <span>{loading ? 'Adding...' : 'Add Asset'}</span>
             </button>
           </div>
         </form>

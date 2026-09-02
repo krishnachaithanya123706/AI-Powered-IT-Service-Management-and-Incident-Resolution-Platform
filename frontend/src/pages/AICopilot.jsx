@@ -1,19 +1,19 @@
 import React, { useState } from 'react';
 import { api } from '../services/api';
-import { Bot, Send, Sparkles, User, Terminal, CheckCircle2, RefreshCw } from 'lucide-react';
+import { Bot, Send, Sparkles, User, RefreshCw } from 'lucide-react';
 
 export default function AICopilot() {
   const [messages, setMessages] = useState([
     {
       sender: 'ai',
-      text: `Hello! I am your **Aether ITSM AI Operations Assistant**.
-I continuously analyze system logs, knowledge playbooks, SLA countdowns, and active alerts.
+      text: `Hello! I am your Nexus ITSM AI Operations Copilot.
+I continuously analyze system logs, knowledge playbooks, SLA countdowns, and active infrastructure telemetry.
 
 How can I assist your IT operations team today?`,
       suggestedActions: [
-        'How to resolve database deadlocks?',
-        'Draft P1 incident post-mortem',
-        'Summarize critical infrastructure alerts'
+        'How to resolve database connection pool exhaustion?',
+        'Draft P1 incident post-mortem report',
+        'Summarize critical Kubernetes cluster alerts'
       ]
     }
   ]);
@@ -46,23 +46,16 @@ How can I assist your IT operations team today?`,
   };
 
   return (
-    <div className="page-body" style={{ display: 'flex', flexDirection: 'column', height: 'calc(100vh - 64px - 3.5rem)' }}>
+    <div className="page-body" style={{ display: 'flex', flexDirection: 'column', height: 'calc(100vh - 65px - 4rem)' }}>
       {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem' }}>
-        <div style={{
-          padding: '0.5rem',
-          borderRadius: '10px',
-          background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(99, 102, 241, 0.2))',
-          border: '1px solid rgba(139, 92, 246, 0.4)'
-        }}>
-          <Bot size={24} color="#a78bfa" />
-        </div>
+      <div className="page-header" style={{ marginBottom: '1rem' }}>
         <div>
-          <h1 style={{ fontSize: '1.4rem', fontWeight: 700, color: '#f8fafc', margin: 0 }}>
-            AI Operations & Incident Copilot
+          <h1 className="page-title">
+            <Bot size={26} color="var(--accent-purple)" />
+            <span>AI Operations & Incident Copilot</span>
           </h1>
-          <p style={{ color: '#94a3b8', fontSize: '0.8rem', margin: 0 }}>
-            Query runbooks, diagnose root causes, generate incident post-mortems, and execute resolution playbooks
+          <p className="page-subtitle">
+            Query runbooks, diagnose root causes, generate incident post-mortems, and execute resolution playbooks.
           </p>
         </div>
       </div>
@@ -70,7 +63,7 @@ How can I assist your IT operations team today?`,
       {/* Chat Container */}
       <div className="glass-card" style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', padding: 0 }}>
         {/* Messages Scroll View */}
-        <div style={{ flex: 1, overflowY: 'auto', padding: '1.25rem', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+        <div style={{ flex: 1, overflowY: 'auto', padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
           {messages.map((msg, idx) => (
             <div key={idx} style={{
               display: 'flex',
@@ -80,24 +73,25 @@ How can I assist your IT operations team today?`,
             }}>
               {msg.sender === 'ai' && (
                 <div style={{
-                  width: '32px',
-                  height: '32px',
+                  width: '34px',
+                  height: '34px',
                   borderRadius: '50%',
-                  background: 'linear-gradient(135deg, #8b5cf6, #6366f1)',
+                  background: 'linear-gradient(135deg, #a855f7 0%, #7c3aed 100%)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  flexShrink: 0
+                  flexShrink: 0,
+                  boxShadow: '0 0 12px rgba(168, 85, 247, 0.4)'
                 }}>
                   <Sparkles size={16} color="white" />
                 </div>
               )}
 
               <div style={{
-                background: msg.sender === 'user' ? 'rgba(59, 130, 246, 0.2)' : 'rgba(15, 23, 42, 0.8)',
-                border: msg.sender === 'user' ? '1px solid rgba(59, 130, 246, 0.4)' : '1px solid rgba(255, 255, 255, 0.08)',
-                borderRadius: '0.75rem',
-                padding: '0.85rem 1.1rem',
+                background: msg.sender === 'user' ? 'rgba(0, 242, 254, 0.12)' : 'rgba(13, 17, 28, 0.85)',
+                border: msg.sender === 'user' ? '1px solid rgba(0, 242, 254, 0.3)' : '1px solid var(--border-color)',
+                borderRadius: '12px',
+                padding: '1rem 1.25rem',
                 color: '#f8fafc',
                 fontSize: '0.9rem',
                 lineHeight: 1.5,
@@ -113,12 +107,13 @@ How can I assist your IT operations team today?`,
                         key={aIdx}
                         onClick={() => handleSend(action)}
                         style={{
-                          background: 'rgba(139, 92, 246, 0.15)',
-                          border: '1px solid rgba(139, 92, 246, 0.3)',
-                          color: '#c4b5fd',
+                          background: 'rgba(168, 85, 247, 0.15)',
+                          border: '1px solid rgba(168, 85, 247, 0.3)',
+                          color: '#c084fc',
                           borderRadius: '16px',
-                          padding: '0.25rem 0.75rem',
+                          padding: '0.3rem 0.85rem',
                           fontSize: '0.75rem',
+                          fontWeight: 600,
                           cursor: 'pointer',
                           transition: 'all 0.15s ease'
                         }}
@@ -132,8 +127,8 @@ How can I assist your IT operations team today?`,
 
               {msg.sender === 'user' && (
                 <div style={{
-                  width: '32px',
-                  height: '32px',
+                  width: '34px',
+                  height: '34px',
                   borderRadius: '50%',
                   background: 'rgba(255, 255, 255, 0.1)',
                   display: 'flex',
@@ -148,31 +143,31 @@ How can I assist your IT operations team today?`,
           ))}
 
           {loading && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#a78bfa', fontSize: '0.85rem' }}>
-              <RefreshCw className="animate-spin" size={16} /> AI Assistant is analyzing IT knowledge base...
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#c084fc', fontSize: '0.85rem' }}>
+              <RefreshCw className="animate-spin" size={16} /> AI Operations Copilot is querying knowledge base & telemetry...
             </div>
           )}
         </div>
 
         {/* Input Bar */}
         <div style={{
-          padding: '1rem',
-          borderTop: '1px solid rgba(255, 255, 255, 0.08)',
-          background: 'rgba(9, 13, 22, 0.8)',
+          padding: '1.25rem',
+          borderTop: '1px solid var(--border-color)',
+          background: 'rgba(11, 15, 25, 0.9)',
           display: 'flex',
           gap: '0.75rem'
         }}>
           <input
             type="text"
             className="form-input"
-            placeholder="Ask AI Copilot for playbook steps, root cause analysis, or post-mortem summaries..."
+            placeholder="Ask AI Copilot for runbook steps, error log diagnosis, or incident post-mortems..."
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-            style={{ borderRadius: '0.5rem' }}
           />
-          <button className="btn btn-ai" onClick={() => handleSend()} disabled={loading}>
-            <Send size={16} /> Send
+          <button className="btn btn-primary" onClick={() => handleSend()} disabled={loading}>
+            <Send size={16} />
+            <span>Send</span>
           </button>
         </div>
       </div>

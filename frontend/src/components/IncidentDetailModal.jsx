@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, CheckCircle } from 'lucide-react';
+import { X, CheckCircle, Sparkles } from 'lucide-react';
 
 export default function IncidentDetailModal({ incident, onClose, onResolveWithAI }) {
   const [isResolving, setIsResolving] = useState(false);
@@ -9,7 +9,7 @@ export default function IncidentDetailModal({ incident, onClose, onResolveWithAI
   const handleResolve = async () => {
     setIsResolving(true);
     try {
-      await onResolveWithAI(incident.id);
+      await onResolveWithAI(incident._id || incident.id);
       onClose();
     } catch (err) {
       alert('Error: ' + err.message);
@@ -21,59 +21,58 @@ export default function IncidentDetailModal({ incident, onClose, onResolveWithAI
   const isResolved = incident.status === 'Resolved' || incident.status === 'Closed';
 
   return (
-    <div className="modal-overlay">
-      <div className="modal-content">
-        <div style={{
-          padding: '1rem 1.25rem',
-          borderBottom: '1px solid #e2e8f0',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between'
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <span style={{ fontWeight: 700, color: '#2563eb' }}>{incident.ticket_number}</span>
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+        <div className="modal-header">
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+            <span style={{ fontWeight: 800, color: 'var(--accent-cyan)', fontSize: '1.05rem' }}>{incident.ticket_number}</span>
             <span className={`badge badge-${incident.priority ? incident.priority.toLowerCase() : 'p3'}`}>
               {incident.priority}
             </span>
           </div>
-          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#64748b' }}>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}>
             <X size={18} />
           </button>
         </div>
 
-        <div style={{ padding: '1.25rem' }}>
-          <h2 style={{ fontSize: '1.1rem', fontWeight: 600, color: '#1e293b', marginBottom: '0.5rem' }}>
+        <div className="modal-body">
+          <h2 style={{ fontSize: '1.15rem', fontWeight: 700, color: '#ffffff', marginBottom: '0.5rem' }}>
             {incident.title}
           </h2>
-          <p style={{ fontSize: '0.875rem', color: '#64748b', marginBottom: '1rem' }}>
-            {incident.description || 'No description provided.'}
+          <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '1.25rem', lineHeight: 1.5 }}>
+            {incident.description || 'No detailed description provided.'}
           </p>
 
           <div style={{
-            background: '#f8fafc',
-            border: '1px solid #e2e8f0',
-            borderRadius: '6px',
-            padding: '0.75rem',
-            fontSize: '0.8rem',
-            color: '#334155',
-            marginBottom: '1rem'
+            background: 'rgba(13, 17, 28, 0.8)',
+            border: '1px solid var(--border-color)',
+            borderRadius: '10px',
+            padding: '0.9rem 1.1rem',
+            fontSize: '0.82rem',
+            color: 'var(--text-primary)',
+            marginBottom: '1.25rem',
+            display: 'grid',
+            gridTemplateColumns: '1fr 1fr',
+            gap: '0.6rem'
           }}>
-            <div><strong>Impacted Service:</strong> {incident.impacted_service || 'General'}</div>
-            <div><strong>Assigned Team:</strong> {incident.assigned_team || 'Tier-1 IT Desk'}</div>
-            <div><strong>Category:</strong> {incident.category || 'Infrastructure'}</div>
+            <div><strong style={{ color: 'var(--text-muted)' }}>Impacted Service:</strong> <span style={{ color: '#ffffff', fontWeight: 600 }}>{incident.impacted_service || 'General API'}</span></div>
+            <div><strong style={{ color: 'var(--text-muted)' }}>Assigned Team:</strong> <span style={{ color: '#ffffff', fontWeight: 600 }}>{incident.assigned_team || 'Tier-1 IT Desk'}</span></div>
+            <div><strong style={{ color: 'var(--text-muted)' }}>Category:</strong> <span style={{ color: 'var(--accent-cyan)', fontWeight: 600 }}>{incident.category || 'Infrastructure'}</span></div>
+            <div><strong style={{ color: 'var(--text-muted)' }}>AI Confidence:</strong> <span style={{ color: 'var(--accent-emerald)', fontWeight: 700 }}>{incident.ai_confidence || 94}%</span></div>
           </div>
 
           <div style={{
-            background: '#f0f9ff',
-            border: '1px solid #bae6fd',
-            borderRadius: '6px',
-            padding: '1rem',
-            marginBottom: '1rem'
+            background: 'rgba(0, 242, 254, 0.06)',
+            border: '1px solid rgba(0, 242, 254, 0.25)',
+            borderRadius: '10px',
+            padding: '1.1rem',
+            marginBottom: '1.25rem'
           }}>
-            <h3 style={{ fontSize: '0.85rem', fontWeight: 600, color: '#0369a1', marginBottom: '0.35rem' }}>
-              💡 AI Recommended Resolution Steps
+            <h3 style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--accent-cyan)', marginBottom: '0.4rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+              <Sparkles size={16} />
+              AI Recommended Resolution Playbook
             </h3>
-            <p style={{ fontSize: '0.8rem', color: '#0c4a6e', whiteSpace: 'pre-line', lineHeight: 1.4 }}>
+            <p style={{ fontSize: '0.82rem', color: '#e2e8f0', whiteSpace: 'pre-line', lineHeight: 1.5, fontFamily: 'monospace' }}>
               {incident.ai_suggested_resolution || '1. Verify service connectivity.\n2. Restart affected process queue.'}
             </p>
           </div>
@@ -81,22 +80,17 @@ export default function IncidentDetailModal({ incident, onClose, onResolveWithAI
           {!isResolved && (
             <button
               className="btn btn-success"
-              style={{ width: '100%', justifyContent: 'center' }}
+              style={{ width: '100%', justifyContent: 'center', padding: '0.75rem' }}
               onClick={handleResolve}
               disabled={isResolving}
             >
-              <CheckCircle size={16} />
-              {isResolving ? 'Resolving...' : 'Apply Resolution & Mark Resolved'}
+              <CheckCircle size={18} />
+              <span>{isResolving ? 'Applying Playbook...' : 'Execute Playbook & Mark Resolved'}</span>
             </button>
           )}
         </div>
 
-        <div style={{
-          padding: '0.75rem 1.25rem',
-          borderTop: '1px solid #e2e8f0',
-          display: 'flex',
-          justifyContent: 'flex-end'
-        }}>
+        <div className="modal-footer">
           <button className="btn btn-secondary" onClick={onClose}>Close</button>
         </div>
       </div>

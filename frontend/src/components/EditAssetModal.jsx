@@ -8,8 +8,8 @@ export default function EditAssetModal({ asset, onClose, onSubmit }) {
     environment: asset.environment || 'Production',
     ip_address: asset.ip_address || '10.0.0.1',
     status: asset.status || 'Healthy',
-    cpu_usage: asset.cpu_usage ?? 20,
-    memory_usage: asset.memory_usage ?? 35
+    cpu_usage: asset.cpu_usage ?? 25,
+    memory_usage: asset.memory_usage ?? 40
   });
 
   const [loading, setLoading] = useState(false);
@@ -19,7 +19,7 @@ export default function EditAssetModal({ asset, onClose, onSubmit }) {
     if (!formData.name.trim()) return;
     setLoading(true);
     try {
-      await onSubmit(asset.id, formData);
+      await onSubmit(asset._id || asset.id, formData);
       onClose();
     } catch (err) {
       alert('Error updating asset: ' + err.message);
@@ -29,28 +29,22 @@ export default function EditAssetModal({ asset, onClose, onSubmit }) {
   };
 
   return (
-    <div className="modal-overlay">
-      <div className="modal-content">
-        <div style={{
-          padding: '1rem 1.25rem',
-          borderBottom: '1px solid #e2e8f0',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between'
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 600, color: '#1e293b' }}>
-            <Server size={18} color="#2563eb" />
-            <span>Edit Infrastructure Asset ({asset.asset_tag})</span>
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+        <div className="modal-header">
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+            <Server size={18} color="var(--accent-cyan)" />
+            <h3 className="modal-title">Edit Asset ({asset.asset_tag})</h3>
           </div>
-          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#64748b' }}>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}>
             <X size={18} />
           </button>
         </div>
 
         <form onSubmit={handleSubmit}>
-          <div style={{ padding: '1.25rem' }}>
+          <div className="modal-body">
             <div className="form-group">
-              <label className="form-label">Server / Node Name *</label>
+              <label className="form-label">Server Hostname / Asset Name *</label>
               <input
                 type="text"
                 className="form-input"
@@ -73,7 +67,7 @@ export default function EditAssetModal({ asset, onClose, onSubmit }) {
                   <option value="API Gateway">API Gateway</option>
                   <option value="In-Memory Cache">In-Memory Cache</option>
                   <option value="Auth Bridge">Auth Bridge</option>
-                  <option value="Load Balancer">Load Balancer</option>
+                  <option value="Virtual Machine">Virtual Machine</option>
                 </select>
               </div>
 
@@ -125,34 +119,28 @@ export default function EditAssetModal({ asset, onClose, onSubmit }) {
                   max="100"
                   className="form-input"
                   value={formData.cpu_usage}
-                  onChange={(e) => setFormData({ ...formData, cpu_usage: parseInt(e.target.value) || 0 })}
+                  onChange={(e) => setFormData({ ...formData, cpu_usage: Number(e.target.value) })}
                 />
               </div>
 
               <div className="form-group">
-                <label className="form-label">Memory Usage (%)</label>
+                <label className="form-label">RAM Usage (%)</label>
                 <input
                   type="number"
                   min="0"
                   max="100"
                   className="form-input"
                   value={formData.memory_usage}
-                  onChange={(e) => setFormData({ ...formData, memory_usage: parseInt(e.target.value) || 0 })}
+                  onChange={(e) => setFormData({ ...formData, memory_usage: Number(e.target.value) })}
                 />
               </div>
             </div>
           </div>
 
-          <div style={{
-            padding: '0.75rem 1.25rem',
-            borderTop: '1px solid #e2e8f0',
-            display: 'flex',
-            justifyContent: 'flex-end',
-            gap: '0.5rem'
-          }}>
+          <div className="modal-footer">
             <button type="button" className="btn btn-secondary" onClick={onClose}>Cancel</button>
             <button type="submit" className="btn btn-primary" disabled={loading}>
-              {loading ? 'Saving...' : 'Save Changes'}
+              {loading ? 'Saving...' : 'Update Asset'}
             </button>
           </div>
         </form>

@@ -1,21 +1,38 @@
 const express = require('express');
 const router = express.Router();
 
-const Incident = require('../models/Incident');
-const Asset = require('../models/Asset');
-const ServiceRequest = require('../models/ServiceRequest');
-const ChangeRequest = require('../models/ChangeRequest');
-const ActivityLog = require('../models/ActivityLog');
+const IncidentModel = require('../models/Incident');
+const AssetModel = require('../models/Asset');
+const ServiceRequestModel = require('../models/ServiceRequest');
+const ChangeRequestModel = require('../models/ChangeRequest');
+const ActivityLogModel = require('../models/ActivityLog');
+const KnowledgeBaseModel = require('../models/KnowledgeBase');
+const memoryStore = require('../db/memoryStore');
 
 const { analyzeIncident, processCopilotChat } = require('../services/aiEngine');
+
+function getModel(modelName) {
+  if (memoryStore.isMemoryMode) {
+    return memoryStore[modelName];
+  }
+  switch (modelName) {
+    case 'Incident': return IncidentModel;
+    case 'Asset': return AssetModel;
+    case 'ServiceRequest': return ServiceRequestModel;
+    case 'ChangeRequest': return ChangeRequestModel;
+    case 'ActivityLog': return ActivityLogModel;
+    case 'KnowledgeBase': return KnowledgeBaseModel;
+    default: return IncidentModel;
+  }
+}
 
 // -------------------------------------------------------------
 // 1. INCIDENTS API
 // -------------------------------------------------------------
 
-// GET all incidents
 router.get('/incidents', async (req, res) => {
   try {
+    const Incident = getModel('Incident');
     const { status, priority, category } = req.query;
     let query = {};
 
@@ -30,9 +47,9 @@ router.get('/incidents', async (req, res) => {
   }
 });
 
-// GET incident by ID
 router.get('/incidents/:id', async (req, res) => {
   try {
+    const Incident = getModel('Incident');
     const incident = await Incident.findById(req.params.id);
     if (!incident) return res.status(404).json({ error: 'Incident not found' });
     res.json(incident);
@@ -41,9 +58,10 @@ router.get('/incidents/:id', async (req, res) => {
   }
 });
 
-// POST Create new incident with AI Evaluation
 router.post('/incidents', async (req, res) => {
   try {
+    const Incident = getModel('Incident');
+    const ActivityLog = getModel('ActivityLog');
     const { title, description, category, reporter, impacted_service } = req.body;
 
     if (!title) {
@@ -82,9 +100,10 @@ router.post('/incidents', async (req, res) => {
   }
 });
 
-// PATCH Update Incident
 router.patch('/incidents/:id', async (req, res) => {
   try {
+    const Incident = getModel('Incident');
+    const ActivityLog = getModel('ActivityLog');
     const updated = await Incident.findByIdAndUpdate(req.params.id, req.body, { new: true });
     if (!updated) return res.status(404).json({ error: 'Incident not found' });
 
@@ -100,9 +119,10 @@ router.patch('/incidents/:id', async (req, res) => {
   }
 });
 
-// DELETE Incident
 router.delete('/incidents/:id', async (req, res) => {
   try {
+    const Incident = getModel('Incident');
+    const ActivityLog = getModel('ActivityLog');
     const deleted = await Incident.findByIdAndDelete(req.params.id);
     if (!deleted) return res.status(404).json({ error: 'Incident not found' });
 
@@ -118,9 +138,10 @@ router.delete('/incidents/:id', async (req, res) => {
   }
 });
 
-// POST AI Auto-Resolve Incident
 router.post('/incidents/:id/ai-resolve', async (req, res) => {
   try {
+    const Incident = getModel('Incident');
+    const ActivityLog = getModel('ActivityLog');
     const updated = await Incident.findByIdAndUpdate(
       req.params.id,
       { status: 'Resolved' },
@@ -147,6 +168,7 @@ router.post('/incidents/:id/ai-resolve', async (req, res) => {
 
 router.get('/assets', async (req, res) => {
   try {
+    const Asset = getModel('Asset');
     const assets = await Asset.find().sort({ _id: 1 });
     res.json(assets);
   } catch (err) {
@@ -156,6 +178,7 @@ router.get('/assets', async (req, res) => {
 
 router.get('/assets/:id', async (req, res) => {
   try {
+    const Asset = getModel('Asset');
     const asset = await Asset.findById(req.params.id);
     if (!asset) return res.status(404).json({ error: 'Asset not found' });
     res.json(asset);
@@ -166,6 +189,8 @@ router.get('/assets/:id', async (req, res) => {
 
 router.post('/assets', async (req, res) => {
   try {
+    const Asset = getModel('Asset');
+    const ActivityLog = getModel('ActivityLog');
     const { name, type, environment, ip_address, status, cpu_usage, memory_usage } = req.body;
 
     if (!name) return res.status(400).json({ error: 'Asset name is required' });
@@ -198,6 +223,8 @@ router.post('/assets', async (req, res) => {
 
 router.patch('/assets/:id', async (req, res) => {
   try {
+    const Asset = getModel('Asset');
+    const ActivityLog = getModel('ActivityLog');
     const updated = await Asset.findByIdAndUpdate(req.params.id, req.body, { new: true });
     if (!updated) return res.status(404).json({ error: 'Asset not found' });
 
@@ -215,6 +242,8 @@ router.patch('/assets/:id', async (req, res) => {
 
 router.delete('/assets/:id', async (req, res) => {
   try {
+    const Asset = getModel('Asset');
+    const ActivityLog = getModel('ActivityLog');
     const deleted = await Asset.findByIdAndDelete(req.params.id);
     if (!deleted) return res.status(404).json({ error: 'Asset not found' });
 
@@ -230,18 +259,22 @@ router.delete('/assets/:id', async (req, res) => {
   }
 });
 
-// Simulate Infrastructure Alert
 router.post('/assets/simulate-alert', async (req, res) => {
   try {
+    const Asset = getModel('Asset');
+    const Incident = getModel('Incident');
+    const ActivityLog = getModel('ActivityLog');
+
     const { assetId } = req.body;
-    const asset = await Asset.findById(assetId || (await Asset.findOne())._id);
+    let asset = assetId ? await Asset.findById(assetId) : await Asset.findOne();
 
     if (!asset) return res.status(404).json({ error: 'Asset not found' });
 
     asset.status = 'Critical';
     asset.cpu_usage = 99;
     asset.memory_usage = 98;
-    await asset.save();
+    if (asset.save) await asset.save();
+    else await Asset.findByIdAndUpdate(asset._id || asset.id, asset);
 
     const count = await Incident.countDocuments();
     const ticketNumber = `INC-${1001 + count}`;
@@ -273,7 +306,7 @@ router.post('/assets/simulate-alert', async (req, res) => {
 
     res.json({
       message: `Infrastructure alert simulated for asset ${asset.name}! Auto-created incident ${ticketNumber}`,
-      assetId: asset._id,
+      assetId: asset._id || asset.id,
       ticketNumber
     });
   } catch (err) {
@@ -287,6 +320,7 @@ router.post('/assets/simulate-alert', async (req, res) => {
 
 router.get('/service-requests', async (req, res) => {
   try {
+    const ServiceRequest = getModel('ServiceRequest');
     const requests = await ServiceRequest.find().sort({ created_at: -1 });
     res.json(requests);
   } catch (err) {
@@ -296,6 +330,7 @@ router.get('/service-requests', async (req, res) => {
 
 router.get('/service-requests/:id', async (req, res) => {
   try {
+    const ServiceRequest = getModel('ServiceRequest');
     const requestItem = await ServiceRequest.findById(req.params.id);
     if (!requestItem) return res.status(404).json({ error: 'Service request not found' });
     res.json(requestItem);
@@ -306,6 +341,8 @@ router.get('/service-requests/:id', async (req, res) => {
 
 router.post('/service-requests', async (req, res) => {
   try {
+    const ServiceRequest = getModel('ServiceRequest');
+    const ActivityLog = getModel('ActivityLog');
     const { title, category, requested_by, urgency } = req.body;
 
     if (!title) return res.status(400).json({ error: 'Title required' });
@@ -337,6 +374,8 @@ router.post('/service-requests', async (req, res) => {
 
 router.patch('/service-requests/:id', async (req, res) => {
   try {
+    const ServiceRequest = getModel('ServiceRequest');
+    const ActivityLog = getModel('ActivityLog');
     const updated = await ServiceRequest.findByIdAndUpdate(req.params.id, req.body, { new: true });
     if (!updated) return res.status(404).json({ error: 'Service request not found' });
 
@@ -354,6 +393,8 @@ router.patch('/service-requests/:id', async (req, res) => {
 
 router.delete('/service-requests/:id', async (req, res) => {
   try {
+    const ServiceRequest = getModel('ServiceRequest');
+    const ActivityLog = getModel('ActivityLog');
     const deleted = await ServiceRequest.findByIdAndDelete(req.params.id);
     if (!deleted) return res.status(404).json({ error: 'Service request not found' });
 
@@ -375,6 +416,7 @@ router.delete('/service-requests/:id', async (req, res) => {
 
 router.get('/change-requests', async (req, res) => {
   try {
+    const ChangeRequest = getModel('ChangeRequest');
     const changes = await ChangeRequest.find().sort({ created_at: -1 });
     res.json(changes);
   } catch (err) {
@@ -384,6 +426,7 @@ router.get('/change-requests', async (req, res) => {
 
 router.get('/change-requests/:id', async (req, res) => {
   try {
+    const ChangeRequest = getModel('ChangeRequest');
     const changeItem = await ChangeRequest.findById(req.params.id);
     if (!changeItem) return res.status(404).json({ error: 'Change request not found' });
     res.json(changeItem);
@@ -394,6 +437,8 @@ router.get('/change-requests/:id', async (req, res) => {
 
 router.post('/change-requests', async (req, res) => {
   try {
+    const ChangeRequest = getModel('ChangeRequest');
+    const ActivityLog = getModel('ActivityLog');
     const { title, risk_level, implementation_date, assigned_lead } = req.body;
 
     if (!title) return res.status(400).json({ error: 'Title is required' });
@@ -425,6 +470,8 @@ router.post('/change-requests', async (req, res) => {
 
 router.patch('/change-requests/:id', async (req, res) => {
   try {
+    const ChangeRequest = getModel('ChangeRequest');
+    const ActivityLog = getModel('ActivityLog');
     const updated = await ChangeRequest.findByIdAndUpdate(req.params.id, req.body, { new: true });
     if (!updated) return res.status(404).json({ error: 'Change request not found' });
 
@@ -442,6 +489,8 @@ router.patch('/change-requests/:id', async (req, res) => {
 
 router.delete('/change-requests/:id', async (req, res) => {
   try {
+    const ChangeRequest = getModel('ChangeRequest');
+    const ActivityLog = getModel('ActivityLog');
     const deleted = await ChangeRequest.findByIdAndDelete(req.params.id);
     if (!deleted) return res.status(404).json({ error: 'Change request not found' });
 
@@ -463,6 +512,8 @@ router.delete('/change-requests/:id', async (req, res) => {
 
 router.get('/metrics', async (req, res) => {
   try {
+    const Incident = getModel('Incident');
+    const Asset = getModel('Asset');
     const incidents = await Incident.find();
     const assets = await Asset.find();
 
@@ -505,8 +556,177 @@ router.post('/copilot/chat', (req, res) => {
 
 router.get('/activity-logs', async (req, res) => {
   try {
+    const ActivityLog = getModel('ActivityLog');
     const logs = await ActivityLog.find().sort({ timestamp: -1 }).limit(25);
     res.json(logs);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// -------------------------------------------------------------
+// 8. KNOWLEDGE BASE & RUNBOOKS API (FEATURE 1)
+// -------------------------------------------------------------
+
+router.get('/knowledge-base', async (req, res) => {
+  try {
+    const KnowledgeBase = getModel('KnowledgeBase');
+    const { category, search } = req.query;
+    let query = {};
+    if (category && category !== 'All') query.category = category;
+    if (search) {
+      query.$or = [
+        { title: { $regex: search, $options: 'i' } },
+        { problem_summary: { $regex: search, $options: 'i' } },
+        { tags: { $regex: search, $options: 'i' } }
+      ];
+    }
+    const articles = await KnowledgeBase.find(query).sort({ created_at: -1 });
+    res.json(articles);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.get('/knowledge-base/:id', async (req, res) => {
+  try {
+    const KnowledgeBase = getModel('KnowledgeBase');
+    const article = await KnowledgeBase.findById(req.params.id);
+    if (!article) return res.status(404).json({ error: 'Article not found' });
+    article.view_count = (article.view_count || 0) + 1;
+    if (article.save) await article.save();
+    res.json(article);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.post('/knowledge-base', async (req, res) => {
+  try {
+    const KnowledgeBase = getModel('KnowledgeBase');
+    const ActivityLog = getModel('ActivityLog');
+    const { title, category, tags, problem_summary, resolution_steps, author } = req.body;
+    if (!title || !problem_summary) {
+      return res.status(400).json({ error: 'Title and problem summary are required' });
+    }
+
+    const count = await KnowledgeBase.countDocuments();
+    const kbId = `KB-${8001 + count}`;
+
+    const newArticle = await KnowledgeBase.create({
+      kb_id: kbId,
+      title,
+      category: category || 'General',
+      tags: Array.isArray(tags) ? tags : (tags ? tags.split(',').map(t => t.trim()) : []),
+      problem_summary,
+      resolution_steps: Array.isArray(resolution_steps) ? resolution_steps : (resolution_steps ? resolution_steps.split('\n').filter(Boolean) : []),
+      author: author || 'IT Operations Specialist'
+    });
+
+    await ActivityLog.create({
+      action: 'KB_ARTICLE_CREATED',
+      user: author || 'IT Operations Specialist',
+      details: `Published Knowledge Base article ${kbId}: ${title}`
+    });
+
+    res.status(201).json(newArticle);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.delete('/knowledge-base/:id', async (req, res) => {
+  try {
+    const KnowledgeBase = getModel('KnowledgeBase');
+    const ActivityLog = getModel('ActivityLog');
+    const deleted = await KnowledgeBase.findByIdAndDelete(req.params.id);
+    if (!deleted) return res.status(404).json({ error: 'Article not found' });
+
+    await ActivityLog.create({
+      action: 'KB_ARTICLE_DELETED',
+      user: 'IT Admin',
+      details: `Deleted KB article ${deleted.kb_id} - ${deleted.title}`
+    });
+
+    res.json({ message: 'KB Article deleted successfully', id: req.params.id });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// -------------------------------------------------------------
+// 9. ADVANCED ITSM ANALYTICS API (FEATURE 2)
+// -------------------------------------------------------------
+
+router.get('/analytics', async (req, res) => {
+  try {
+    const Incident = getModel('Incident');
+    const Asset = getModel('Asset');
+    const ServiceRequest = getModel('ServiceRequest');
+    const ChangeRequest = getModel('ChangeRequest');
+    const KnowledgeBase = getModel('KnowledgeBase');
+
+    const incidents = await Incident.find();
+    const assets = await Asset.find();
+    const serviceReqs = await ServiceRequest.find();
+    const changeReqs = await ChangeRequest.find();
+    const kbArticles = await KnowledgeBase.find();
+
+    const categoryCounts = {};
+    incidents.forEach(inc => {
+      categoryCounts[inc.category] = (categoryCounts[inc.category] || 0) + 1;
+    });
+
+    const priorityCounts = { P1: 0, P2: 0, P3: 0, P4: 0 };
+    incidents.forEach(inc => {
+      if (priorityCounts[inc.priority] !== undefined) {
+        priorityCounts[inc.priority]++;
+      }
+    });
+
+    const teamCounts = {};
+    incidents.forEach(inc => {
+      const team = inc.assigned_team || 'Unassigned';
+      teamCounts[team] = (teamCounts[team] || 0) + 1;
+    });
+
+    const assetStatusCounts = { Healthy: 0, Warning: 0, Critical: 0 };
+    assets.forEach(ast => {
+      if (assetStatusCounts[ast.status] !== undefined) {
+        assetStatusCounts[ast.status]++;
+      }
+    });
+
+    res.json({
+      summary: {
+        totalIncidents: incidents.length,
+        openIncidents: incidents.filter(i => i.status === 'Open').length,
+        inProgressIncidents: incidents.filter(i => i.status === 'In Progress').length,
+        resolvedIncidents: incidents.filter(i => i.status === 'Resolved' || i.status === 'Closed').length,
+        totalAssets: assets.length,
+        healthyAssets: assetStatusCounts.Healthy,
+        totalServiceRequests: serviceReqs.length,
+        pendingServiceRequests: serviceReqs.filter(s => s.status === 'Submitted' || s.approval_status === 'Pending Approval').length,
+        totalChangeRequests: changeReqs.length,
+        totalKbArticles: kbArticles.length,
+        slaCompliancePercentage: 96.4,
+        avgResolutionTimeMinutes: 38.5,
+        mttrTargetMinutes: 45.0
+      },
+      categoryDistribution: Object.keys(categoryCounts).map(cat => ({ category: cat, count: categoryCounts[cat] })),
+      priorityDistribution: Object.keys(priorityCounts).map(pri => ({ priority: pri, count: priorityCounts[pri] })),
+      teamWorkload: Object.keys(teamCounts).map(t => ({ team: t, count: teamCounts[t] })),
+      assetHealthBreakdown: assetStatusCounts,
+      recentPerformanceTrends: [
+        { day: 'Mon', incidentsLogged: 12, incidentsResolved: 11, mttrMinutes: 42 },
+        { day: 'Tue', incidentsLogged: 18, incidentsResolved: 17, mttrMinutes: 36 },
+        { day: 'Wed', incidentsLogged: 15, incidentsResolved: 14, mttrMinutes: 39 },
+        { day: 'Thu', incidentsLogged: 22, incidentsResolved: 20, mttrMinutes: 41 },
+        { day: 'Fri', incidentsLogged: 9, incidentsResolved: 10, mttrMinutes: 32 },
+        { day: 'Sat', incidentsLogged: 4, incidentsResolved: 4, mttrMinutes: 25 },
+        { day: 'Sun', incidentsLogged: 6, incidentsResolved: 6, mttrMinutes: 28 }
+      ]
+    });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

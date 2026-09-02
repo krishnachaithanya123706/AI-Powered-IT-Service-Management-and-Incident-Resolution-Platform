@@ -116,6 +116,29 @@ export const api = {
     method: 'DELETE'
   }),
 
+  // Knowledge Base & Operations Runbooks (Feature 1)
+  getKnowledgeBase: (category = '', search = '') => {
+    const params = new URLSearchParams();
+    if (category && category !== 'All') params.append('category', category);
+    if (search) params.append('search', search);
+    const queryString = params.toString() ? `?${params.toString()}` : '';
+    return request(`/knowledge-base${queryString}`);
+  },
+
+  getKBArticleById: (id) => request(`/knowledge-base/${id}`),
+
+  createKBArticle: (data) => request('/knowledge-base', {
+    method: 'POST',
+    body: JSON.stringify(data)
+  }),
+
+  deleteKBArticle: (id) => request(`/knowledge-base/${id}`, {
+    method: 'DELETE'
+  }),
+
+  // Advanced ITSM Analytics (Feature 2)
+  getAnalytics: () => request('/analytics'),
+
   // AI Copilot
   sendCopilotPrompt: (prompt) => request('/copilot/chat', {
     method: 'POST',

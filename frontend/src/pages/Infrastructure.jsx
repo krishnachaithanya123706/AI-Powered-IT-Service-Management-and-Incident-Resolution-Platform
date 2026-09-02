@@ -47,7 +47,7 @@ export default function Infrastructure({ onAlertSimulated, onMetricsUpdate }) {
     if (!deletingAsset) return;
     setDeleteLoading(true);
     try {
-      await api.deleteAsset(deletingAsset.id);
+      await api.deleteAsset(deletingAsset._id || deletingAsset.id);
       setDeletingAsset(null);
       await loadAssets();
       if (onMetricsUpdate) onMetricsUpdate();
@@ -61,7 +61,7 @@ export default function Infrastructure({ onAlertSimulated, onMetricsUpdate }) {
   const handleSimulateAlert = async (assetId) => {
     try {
       const res = await api.simulateAssetAlert(assetId);
-      alert(`Alert simulated for server! Created incident ticket ${res.ticketNumber}`);
+      alert(`Alert simulated for server node! Triggered incident ticket ${res.ticketNumber}`);
       await loadAssets();
       if (onAlertSimulated) onAlertSimulated();
       if (onMetricsUpdate) onMetricsUpdate();
@@ -72,94 +72,100 @@ export default function Infrastructure({ onAlertSimulated, onMetricsUpdate }) {
 
   return (
     <div className="page-body">
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem' }}>
+      <div className="page-header">
         <div>
-          <h1 style={{ fontSize: '1.35rem', fontWeight: 700, color: '#1e293b' }}>
-            IT Infrastructure & Assets
+          <h1 className="page-title">
+            <Server size={24} color="var(--accent-cyan)" />
+            <span>IT Infrastructure & Asset Telemetry</span>
           </h1>
-          <p style={{ color: '#64748b', fontSize: '0.85rem' }}>
-            Manage, monitor, edit, and provision enterprise IT servers, DBs, and network nodes
+          <p className="page-subtitle">
+            Real-time server node metrics, hardware health monitoring, and interactive fault simulation.
           </p>
         </div>
         <button className="btn btn-primary" onClick={() => setIsNewAssetOpen(true)}>
-          <Plus size={16} /> Add New Asset
+          <Plus size={16} /> Add IT Asset
         </button>
       </div>
 
-      <div className="basic-card">
+      <div className="table-container">
         {loading ? (
-          <div style={{ padding: '1.5rem', textAlign: 'center', color: '#64748b' }}>Loading assets...</div>
+          <div style={{ padding: '3rem', textAlign: 'center', color: 'var(--text-muted)' }}>Loading IT assets...</div>
         ) : assets.length === 0 ? (
-          <div style={{ padding: '2rem', textAlign: 'center', color: '#94a3b8' }}>
-            No infrastructure assets configured. Click "Add New Asset" to create one.
+          <div style={{ padding: '3rem', textAlign: 'center', color: 'var(--text-muted)' }}>
+            No infrastructure assets configured. Click "Add IT Asset" to create one.
           </div>
         ) : (
-          <div className="table-container">
-            <table className="simple-table">
-              <thead>
-                <tr>
-                  <th>Asset Tag</th>
-                  <th>Server Name</th>
-                  <th>Type</th>
-                  <th>Environment</th>
-                  <th>IP Address</th>
-                  <th>CPU / Mem</th>
-                  <th>Status</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {assets.map(asset => (
-                  <tr key={asset.id}>
-                    <td style={{ fontWeight: 600, color: '#64748b' }}>{asset.asset_tag}</td>
-                    <td style={{ fontWeight: 500, color: '#1e293b' }}>{asset.name}</td>
-                    <td style={{ color: '#475569' }}>{asset.type}</td>
-                    <td>{asset.environment}</td>
-                    <td style={{ fontFamily: 'monospace' }}>{asset.ip_address}</td>
-                    <td style={{ fontSize: '0.8rem', color: '#64748b' }}>
-                      CPU {asset.cpu_usage ?? 0}% | RAM {asset.memory_usage ?? 0}%
-                    </td>
-                    <td>
-                      <span className={`badge ${
-                        asset.status === 'Healthy' ? 'badge-healthy' :
-                        asset.status === 'Warning' ? 'badge-warning' : 'badge-critical'
-                      }`}>
-                        {asset.status}
-                      </span>
-                    </td>
-                    <td>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                        <button
-                          className="btn btn-secondary"
-                          style={{ padding: '0.2rem 0.45rem', fontSize: '0.75rem' }}
-                          title="Simulate Alert"
-                          onClick={() => handleSimulateAlert(asset.id)}
-                        >
-                          <AlertTriangle size={12} color="#dc2626" /> Alert
-                        </button>
-                        <button
-                          className="btn btn-secondary"
-                          style={{ padding: '0.2rem 0.45rem', fontSize: '0.75rem', color: '#2563eb' }}
-                          title="Edit Asset"
-                          onClick={() => setEditingAsset(asset)}
-                        >
-                          <Edit2 size={12} />
-                        </button>
-                        <button
-                          className="btn btn-secondary"
-                          style={{ padding: '0.2rem 0.45rem', fontSize: '0.75rem', color: '#dc2626' }}
-                          title="Delete Asset"
-                          onClick={() => setDeletingAsset(asset)}
-                        >
-                          <Trash2 size={12} />
-                        </button>
+          <table className="simple-table">
+            <thead>
+              <tr>
+                <th>Asset Tag</th>
+                <th>Server Hostname</th>
+                <th>Type</th>
+                <th>Environment</th>
+                <th>IP Address</th>
+                <th>Telemetry Utilization</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {assets.map(asset => (
+                <tr key={asset._id || asset.id}>
+                  <td style={{ fontWeight: 700, color: 'var(--accent-cyan)' }}>{asset.asset_tag}</td>
+                  <td style={{ fontWeight: 600, color: '#ffffff' }}>{asset.name}</td>
+                  <td style={{ color: 'var(--text-secondary)' }}>{asset.type}</td>
+                  <td>
+                    <span className="badge badge-cyan">{asset.environment}</span>
+                  </td>
+                  <td style={{ fontFamily: 'monospace', color: 'var(--text-secondary)' }}>{asset.ip_address}</td>
+                  <td style={{ fontSize: '0.8rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.2rem' }}>
+                      <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>CPU: {asset.cpu_usage ?? 0}%</span>
+                      <div style={{ flex: 1, height: '4px', background: 'rgba(255,255,255,0.06)', borderRadius: '2px' }}>
+                        <div style={{ height: '100%', width: `${asset.cpu_usage ?? 0}%`, background: asset.cpu_usage > 85 ? 'var(--accent-rose)' : 'var(--accent-cyan)', borderRadius: '2px' }} />
                       </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                    </div>
+                  </td>
+                  <td>
+                    <span className={`badge ${
+                      asset.status === 'Healthy' ? 'badge-healthy' :
+                      asset.status === 'Warning' ? 'badge-warning' : 'badge-critical'
+                    }`}>
+                      {asset.status}
+                    </span>
+                  </td>
+                  <td>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                      <button
+                        className="btn btn-secondary btn-sm"
+                        style={{ color: 'var(--accent-rose)' }}
+                        title="Simulate Fault Alert"
+                        onClick={() => handleSimulateAlert(asset._id || asset.id)}
+                      >
+                        <AlertTriangle size={12} /> Fault Alert
+                      </button>
+                      <button
+                        className="btn btn-secondary btn-sm"
+                        style={{ color: 'var(--accent-cyan)' }}
+                        title="Edit Asset"
+                        onClick={() => setEditingAsset(asset)}
+                      >
+                        <Edit2 size={12} />
+                      </button>
+                      <button
+                        className="btn btn-secondary btn-sm"
+                        style={{ color: 'var(--accent-rose)' }}
+                        title="Delete Asset"
+                        onClick={() => setDeletingAsset(asset)}
+                      >
+                        <Trash2 size={12} />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         )}
       </div>
 

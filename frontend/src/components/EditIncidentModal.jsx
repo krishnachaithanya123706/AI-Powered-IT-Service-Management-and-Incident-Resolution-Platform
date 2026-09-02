@@ -19,7 +19,7 @@ export default function EditIncidentModal({ incident, onClose, onSubmit }) {
     if (!formData.title.trim()) return;
     setLoading(true);
     try {
-      await onSubmit(incident.id, formData);
+      await onSubmit(incident._id || incident.id, formData);
       onClose();
     } catch (err) {
       alert('Error updating incident: ' + err.message);
@@ -29,26 +29,20 @@ export default function EditIncidentModal({ incident, onClose, onSubmit }) {
   };
 
   return (
-    <div className="modal-overlay">
-      <div className="modal-content">
-        <div style={{
-          padding: '1rem 1.25rem',
-          borderBottom: '1px solid #e2e8f0',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between'
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 600, color: '#1e293b' }}>
-            <AlertCircle size={18} color="#2563eb" />
-            <span>Edit Ticket ({incident.ticket_number})</span>
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+        <div className="modal-header">
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+            <AlertCircle size={18} color="var(--accent-cyan)" />
+            <h3 className="modal-title">Edit Ticket ({incident.ticket_number})</h3>
           </div>
-          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#64748b' }}>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}>
             <X size={18} />
           </button>
         </div>
 
         <form onSubmit={handleSubmit}>
-          <div style={{ padding: '1.25rem' }}>
+          <div className="modal-body">
             <div className="form-group">
               <label className="form-label">Title *</label>
               <input
@@ -138,13 +132,7 @@ export default function EditIncidentModal({ incident, onClose, onSubmit }) {
             </div>
           </div>
 
-          <div style={{
-            padding: '0.75rem 1.25rem',
-            borderTop: '1px solid #e2e8f0',
-            display: 'flex',
-            justifyContent: 'flex-end',
-            gap: '0.5rem'
-          }}>
+          <div className="modal-footer">
             <button type="button" className="btn btn-secondary" onClick={onClose}>Cancel</button>
             <button type="submit" className="btn btn-primary" disabled={loading}>
               {loading ? 'Saving...' : 'Update Ticket'}

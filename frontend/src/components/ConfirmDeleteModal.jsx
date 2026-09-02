@@ -3,40 +3,28 @@ import { AlertTriangle, X } from 'lucide-react';
 
 export default function ConfirmDeleteModal({ title, itemType, itemName, onClose, onConfirm, loading }) {
   return (
-    <div className="modal-overlay">
-      <div className="modal-content" style={{ maxWidth: '440px' }}>
-        <div style={{
-          padding: '1rem 1.25rem',
-          borderBottom: '1px solid #e2e8f0',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between'
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#dc2626', fontWeight: 600 }}>
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-content" style={{ maxWidth: '440px' }} onClick={(e) => e.stopPropagation()}>
+        <div className="modal-header">
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', color: 'var(--accent-rose)', fontWeight: 700 }}>
             <AlertTriangle size={20} />
             <span>{title || `Delete ${itemType || 'Item'}`}</span>
           </div>
-          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#64748b' }}>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}>
             <X size={18} />
           </button>
         </div>
 
-        <div style={{ padding: '1.25rem' }}>
-          <p style={{ fontSize: '0.9rem', color: '#334155', marginBottom: '0.75rem' }}>
-            Are you sure you want to delete <strong style={{ color: '#0f172a' }}>{itemName}</strong>?
+        <div className="modal-body">
+          <p style={{ fontSize: '0.9rem', color: '#f8fafc', marginBottom: '0.75rem' }}>
+            Are you sure you want to delete <strong style={{ color: 'var(--accent-rose)' }}>{itemName}</strong>?
           </p>
-          <p style={{ fontSize: '0.8rem', color: '#64748b' }}>
-            This action will permanently remove the record from the ITSM database and log an entry into the activity stream. This action cannot be undone.
+          <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', lineHeight: 1.4 }}>
+            This action will permanently remove the record from the ITSM platform and log an audit entry. This action cannot be undone.
           </p>
         </div>
 
-        <div style={{
-          padding: '0.75rem 1.25rem',
-          borderTop: '1px solid #e2e8f0',
-          display: 'flex',
-          justifyContent: 'flex-end',
-          gap: '0.5rem'
-        }}>
+        <div className="modal-footer">
           <button className="btn btn-secondary" onClick={onClose} disabled={loading}>
             Cancel
           </button>

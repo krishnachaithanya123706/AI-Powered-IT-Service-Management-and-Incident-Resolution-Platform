@@ -6,12 +6,15 @@ import Incidents from './pages/Incidents';
 import Infrastructure from './pages/Infrastructure';
 import ServiceCatalog from './pages/ServiceCatalog';
 import ChangeManagement from './pages/ChangeManagement';
+import KnowledgeBase from './pages/KnowledgeBase';
+import Analytics from './pages/Analytics';
 import AICopilot from './pages/AICopilot';
 
 import IncidentDetailModal from './components/IncidentDetailModal';
 import NewIncidentModal from './components/NewIncidentModal';
 import NewServiceReqModal from './components/NewServiceReqModal';
 import NewChangeModal from './components/NewChangeModal';
+import NewKBArticleModal from './components/NewKBArticleModal';
 
 import { api } from './services/api';
 
@@ -21,6 +24,7 @@ export default function App() {
   const [isNewIncidentOpen, setIsNewIncidentOpen] = useState(false);
   const [isNewRequestOpen, setIsNewRequestOpen] = useState(false);
   const [isNewChangeOpen, setIsNewChangeOpen] = useState(false);
+  const [isNewKBOpen, setIsNewKBOpen] = useState(false);
 
   const [activeIncidentsCount, setActiveIncidentsCount] = useState(0);
 
@@ -50,6 +54,10 @@ export default function App() {
     await api.createChangeRequest(formData);
   };
 
+  const handleCreateKBArticle = async (formData) => {
+    await api.createKBArticle(formData);
+  };
+
   const handleResolveWithAI = async (incidentId) => {
     await api.resolveIncidentWithAI(incidentId);
     await loadHeaderMetrics();
@@ -57,7 +65,7 @@ export default function App() {
 
   return (
     <div className="app-container">
-      {/* Navigation Sidebar */}
+      {/* Dynamic Sidebar */}
       <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
 
       {/* Main Content Body */}
@@ -100,12 +108,22 @@ export default function App() {
           />
         )}
 
+        {activeTab === 'kb' && (
+          <KnowledgeBase
+            onOpenNewArticle={() => setIsNewKBOpen(true)}
+          />
+        )}
+
+        {activeTab === 'analytics' && (
+          <Analytics />
+        )}
+
         {activeTab === 'copilot' && (
           <AICopilot />
         )}
       </div>
 
-      {/* Basic Modals */}
+      {/* Modals */}
       {selectedIncident && (
         <IncidentDetailModal
           incident={selectedIncident}
@@ -132,6 +150,13 @@ export default function App() {
         <NewChangeModal
           onClose={() => setIsNewChangeOpen(false)}
           onSubmit={handleCreateChangeRequest}
+        />
+      )}
+
+      {isNewKBOpen && (
+        <NewKBArticleModal
+          onClose={() => setIsNewKBOpen(false)}
+          onSubmit={handleCreateKBArticle}
         />
       )}
     </div>
