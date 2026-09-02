@@ -81,11 +81,11 @@ export default function KnowledgeBase({ onOpenNewArticle }) {
               onClick={() => setSelectedCategory(cat)}
               className="btn btn-sm"
               style={{
-                background: selectedCategory === cat ? 'linear-gradient(135deg, #00f2fe 0%, #4facfe 100%)' : 'rgba(255, 255, 255, 0.05)',
-                color: selectedCategory === cat ? '#0b0f19' : 'var(--text-secondary)',
+                background: selectedCategory === cat ? 'linear-gradient(135deg, #0284c7 0%, #2563eb 100%)' : '#f1f5f9',
+                color: selectedCategory === cat ? '#ffffff' : 'var(--text-secondary)',
                 fontWeight: selectedCategory === cat ? 700 : 500,
                 border: '1px solid',
-                borderColor: selectedCategory === cat ? 'transparent' : 'rgba(255, 255, 255, 0.1)'
+                borderColor: selectedCategory === cat ? 'transparent' : '#cbd5e1'
               }}
             >
               {cat}
@@ -118,7 +118,7 @@ export default function KnowledgeBase({ onOpenNewArticle }) {
                     cursor: 'pointer',
                     padding: '1.1rem 1.25rem',
                     borderLeft: isSelected ? '4px solid var(--accent-cyan)' : '1px solid var(--border-color)',
-                    background: isSelected ? 'rgba(0, 242, 254, 0.06)' : 'var(--bg-card)'
+                    background: isSelected ? 'rgba(2, 132, 199, 0.06)' : 'var(--bg-card)'
                   }}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.4rem' }}>
@@ -132,7 +132,7 @@ export default function KnowledgeBase({ onOpenNewArticle }) {
                       </span>
                       <button
                         onClick={(e) => handleDelete(article._id, e)}
-                        style={{ background: 'none', border: 'none', color: '#f43f5e', cursor: 'pointer', opacity: 0.7 }}
+                        style={{ background: 'none', border: 'none', color: '#e11d48', cursor: 'pointer', opacity: 0.7 }}
                         title="Delete Article"
                       >
                         <Trash2 size={13} />
@@ -140,7 +140,7 @@ export default function KnowledgeBase({ onOpenNewArticle }) {
                     </div>
                   </div>
 
-                  <h3 style={{ fontSize: '0.95rem', fontWeight: 700, color: '#ffffff', marginBottom: '0.4rem', lineHeight: 1.3 }}>
+                  <h3 style={{ fontSize: '0.95rem', fontWeight: 700, color: '#0f172a', marginBottom: '0.4rem', lineHeight: 1.3 }}>
                     {article.title}
                   </h3>
 
@@ -151,7 +151,7 @@ export default function KnowledgeBase({ onOpenNewArticle }) {
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', flexWrap: 'wrap' }}>
                     <span className="badge badge-cyan">{article.category}</span>
                     {article.tags && article.tags.map((tag, idx) => (
-                      <span key={idx} style={{ fontSize: '0.68rem', color: 'var(--text-muted)', background: 'rgba(255, 255, 255, 0.05)', padding: '0.15rem 0.45rem', borderRadius: '4px' }}>
+                      <span key={idx} style={{ fontSize: '0.68rem', color: 'var(--text-muted)', background: '#f1f5f9', padding: '0.15rem 0.45rem', borderRadius: '4px' }}>
                         #{tag}
                       </span>
                     ))}
@@ -171,11 +171,11 @@ export default function KnowledgeBase({ onOpenNewArticle }) {
                 <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Authored by {activeArticle.author}</span>
               </div>
 
-              <h2 style={{ fontSize: '1.35rem', fontWeight: 800, color: '#ffffff', marginBottom: '0.85rem', lineHeight: 1.3 }}>
+              <h2 style={{ fontSize: '1.35rem', fontWeight: 800, color: '#0f172a', marginBottom: '0.85rem', lineHeight: 1.3 }}>
                 {activeArticle.title}
               </h2>
 
-              <div style={{ marginBottom: '1.25rem', padding: '1rem', background: 'rgba(255, 255, 255, 0.03)', borderRadius: '8px', border: '1px solid rgba(255, 255, 255, 0.06)' }}>
+              <div style={{ marginBottom: '1.25rem', padding: '1rem', background: '#f8fafc', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
                 <h4 style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '0.4rem', letterSpacing: '0.04em' }}>
                   Problem Summary & Context
                 </h4>
@@ -192,11 +192,11 @@ export default function KnowledgeBase({ onOpenNewArticle }) {
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginBottom: '1.5rem' }}>
                 {activeArticle.resolution_steps && activeArticle.resolution_steps.length > 0 ? (
                   activeArticle.resolution_steps.map((step, idx) => (
-                    <div key={idx} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem', padding: '0.75rem 0.9rem', background: 'rgba(13, 17, 28, 0.8)', border: '1px solid rgba(255, 255, 255, 0.06)', borderRadius: '8px' }}>
-                      <span style={{ width: '22px', height: '22px', borderRadius: '50%', background: 'rgba(0, 242, 254, 0.15)', color: 'var(--accent-cyan)', fontWeight: 800, fontSize: '0.72rem', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <div key={idx} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem', padding: '0.75rem 0.9rem', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '8px' }}>
+                      <span style={{ width: '22px', height: '22px', borderRadius: '50%', background: 'rgba(2, 132, 199, 0.1)', color: 'var(--accent-cyan)', fontWeight: 800, fontSize: '0.72rem', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                         {idx + 1}
                       </span>
-                      <span style={{ fontSize: '0.85rem', color: '#e2e8f0', fontFamily: 'monospace' }}>
+                      <span style={{ fontSize: '0.85rem', color: '#0f172a', fontFamily: 'monospace' }}>
                         {step}
                       </span>
                     </div>

@@ -102,7 +102,7 @@ export default function Analytics() {
         <div className="metric-card accent-amber">
           <div>
             <div className="metric-label">Total Incidents</div>
-            <div className="metric-val" style={{ color: '#ffffff' }}>{summary.totalIncidents}</div>
+            <div className="metric-val" style={{ color: '#0f172a' }}>{summary.totalIncidents}</div>
             <div className="metric-sub" style={{ color: 'var(--accent-amber)' }}>{summary.openIncidents} Pending Triage</div>
           </div>
           <div className="metric-icon-box">
@@ -113,11 +113,11 @@ export default function Analytics() {
         <div className="metric-card accent-purple">
           <div>
             <div className="metric-label">Resolved & Closed</div>
-            <div className="metric-val" style={{ color: '#c084fc' }}>{summary.resolvedIncidents}</div>
-            <div className="metric-sub" style={{ color: '#c084fc' }}>100% AI Playbook Assisted</div>
+            <div className="metric-val" style={{ color: 'var(--accent-purple)' }}>{summary.resolvedIncidents}</div>
+            <div className="metric-sub" style={{ color: 'var(--accent-purple)' }}>100% AI Playbook Assisted</div>
           </div>
           <div className="metric-icon-box">
-            <TrendingUp size={22} color="#c084fc" />
+            <TrendingUp size={22} color="var(--accent-purple)" />
           </div>
         </div>
       </div>
@@ -127,7 +127,7 @@ export default function Analytics() {
         {/* Category Breakdown */}
         <div className="glass-card">
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem' }}>
-            <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: '#ffffff', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: '#0f172a', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <Layers size={18} color="var(--accent-cyan)" />
               Incident Volume by Category
             </h3>
@@ -140,15 +140,15 @@ export default function Analytics() {
               return (
                 <div key={idx}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.82rem', marginBottom: '0.35rem' }}>
-                    <span style={{ fontWeight: 600, color: '#e2e8f0' }}>{item.category}</span>
+                    <span style={{ fontWeight: 600, color: '#0f172a' }}>{item.category}</span>
                     <span style={{ color: 'var(--accent-cyan)', fontWeight: 700 }}>{item.count} tickets ({pct}%)</span>
                   </div>
-                  <div style={{ height: '8px', background: 'rgba(255, 255, 255, 0.06)', borderRadius: '4px', overflow: 'hidden' }}>
+                  <div style={{ height: '8px', background: 'rgba(0, 0, 0, 0.06)', borderRadius: '4px', overflow: 'hidden' }}>
                     <div 
                       style={{ 
                         height: '100%', 
                         width: `${Math.max(pct, 5)}%`, 
-                        background: 'linear-gradient(90deg, #00f2fe 0%, #4facfe 100%)',
+                        background: 'linear-gradient(90deg, #0284c7 0%, #2563eb 100%)',
                         borderRadius: '4px'
                       }} 
                     />
@@ -162,7 +162,7 @@ export default function Analytics() {
         {/* Priority Breakdown */}
         <div className="glass-card">
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem' }}>
-            <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: '#ffffff', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: '#0f172a', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <AlertOctagon size={18} color="var(--accent-rose)" />
               Severity Priority Matrix
             </h3>
@@ -172,12 +172,12 @@ export default function Analytics() {
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
             {priorityDistribution.map((item, idx) => {
               let color = 'var(--accent-cyan)';
-              let bg = 'rgba(0, 242, 254, 0.1)';
-              if (item.priority === 'P1') { color = 'var(--accent-rose)'; bg = 'rgba(244, 63, 94, 0.12)'; }
-              if (item.priority === 'P2') { color = 'var(--accent-amber)'; bg = 'rgba(245, 158, 11, 0.12)'; }
+              let bg = 'rgba(2, 132, 199, 0.1)';
+              if (item.priority === 'P1') { color = 'var(--accent-rose)'; bg = 'rgba(225, 29, 72, 0.1)'; }
+              if (item.priority === 'P2') { color = 'var(--accent-amber)'; bg = 'rgba(217, 119, 6, 0.1)'; }
 
               return (
-                <div key={idx} style={{ padding: '1.25rem', background: 'rgba(13, 17, 28, 0.8)', border: '1px solid var(--border-color)', borderRadius: '10px', textAlign: 'center' }}>
+                <div key={idx} style={{ padding: '1.25rem', background: '#f8fafc', border: '1px solid var(--border-color)', borderRadius: '10px', textAlign: 'center' }}>
                   <span className={`badge badge-${item.priority.toLowerCase()}`} style={{ marginBottom: '0.5rem' }}>{item.priority}</span>
                   <div style={{ fontSize: '1.75rem', fontWeight: 800, color: color, margin: '0.2rem 0' }}>{item.count}</div>
                   <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Incidents Logged</div>
@@ -190,7 +190,7 @@ export default function Analytics() {
         {/* Team Workload Distribution */}
         <div className="glass-card">
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem' }}>
-            <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: '#ffffff', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: '#0f172a', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <Users size={18} color="var(--accent-purple)" />
               Support Team Workload Allocation
             </h3>
@@ -198,8 +198,8 @@ export default function Analytics() {
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
             {teamWorkload.map((team, idx) => (
-              <div key={idx} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.75rem 1rem', background: 'rgba(13, 17, 28, 0.8)', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
-                <span style={{ fontSize: '0.85rem', fontWeight: 600, color: '#ffffff' }}>{team.team}</span>
+              <div key={idx} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.75rem 1rem', background: '#f8fafc', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
+                <span style={{ fontSize: '0.85rem', fontWeight: 600, color: '#0f172a' }}>{team.team}</span>
                 <span className="badge badge-purple">{team.count} active tickets</span>
               </div>
             ))}
@@ -209,7 +209,7 @@ export default function Analytics() {
         {/* Weekly MTTR Trend Data */}
         <div className="glass-card">
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem' }}>
-            <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: '#ffffff', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: '#0f172a', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <TrendingUp size={18} color="var(--accent-emerald)" />
               Weekly MTTR Velocity Trend (7-Day)
             </h3>

@@ -90,7 +90,7 @@ export default function ServiceCatalog({ onOpenNewRequest }) {
               {requests.map(req => (
                 <tr key={req._id || req.id}>
                   <td style={{ fontWeight: 700, color: 'var(--accent-emerald)' }}>{req.request_number}</td>
-                  <td style={{ fontWeight: 600, color: '#ffffff' }}>{req.title}</td>
+                  <td style={{ fontWeight: 600, color: '#0f172a' }}>{req.title}</td>
                   <td style={{ color: 'var(--text-secondary)' }}>{req.category}</td>
                   <td style={{ color: 'var(--text-secondary)' }}>{req.requested_by}</td>
                   <td>

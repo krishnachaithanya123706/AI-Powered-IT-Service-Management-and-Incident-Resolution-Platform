@@ -102,13 +102,13 @@ export default function Dashboard({ onSelectIncident, onOpenNewIncident }) {
         <div className="metric-card accent-purple">
           <div>
             <div className="metric-label">Infrastructure Health</div>
-            <div className="metric-val" style={{ color: '#c084fc' }}>
+            <div className="metric-val" style={{ color: 'var(--accent-purple)' }}>
               {metrics?.infrastructureHealthScore ?? 100}%
             </div>
             <div className="metric-sub">Mean MTTR {metrics?.meanTimeToResolveMinutes ?? 38}m</div>
           </div>
           <div className="metric-icon-box">
-            <ShieldCheck size={22} color="#c084fc" />
+            <ShieldCheck size={22} color="var(--accent-purple)" />
           </div>
         </div>
       </div>
@@ -118,7 +118,7 @@ export default function Dashboard({ onSelectIncident, onOpenNewIncident }) {
         {/* Recent Incidents Card */}
         <div className="glass-card">
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
-            <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: '#ffffff' }}>
+            <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: '#0f172a' }}>
               Active & Recent IT Incidents
             </h3>
             <span className="badge badge-cyan">{recentIncidents.length} Tickets</span>
@@ -140,7 +140,7 @@ export default function Dashboard({ onSelectIncident, onOpenNewIncident }) {
                   <tr key={inc._id || inc.id}>
                     <td style={{ fontWeight: 700, color: 'var(--accent-cyan)' }}>{inc.ticket_number}</td>
                     <td>
-                      <div style={{ fontWeight: 600, color: '#ffffff' }}>{inc.title}</div>
+                      <div style={{ fontWeight: 600, color: '#0f172a' }}>{inc.title}</div>
                       <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>{inc.impacted_service || inc.category}</div>
                     </td>
                     <td>
@@ -172,7 +172,7 @@ export default function Dashboard({ onSelectIncident, onOpenNewIncident }) {
         {/* Audit Stream Card */}
         <div className="glass-card">
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
-            <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: '#ffffff', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+            <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: '#0f172a', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
               <Activity size={16} color="var(--accent-cyan)" />
               Live Audit Stream
             </h3>
@@ -181,7 +181,7 @@ export default function Dashboard({ onSelectIncident, onOpenNewIncident }) {
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
             {activityLogs.map((log, idx) => (
-              <div key={idx} style={{ padding: '0.75rem', background: 'rgba(13, 17, 28, 0.8)', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
+              <div key={idx} style={{ padding: '0.75rem', background: '#f8fafc', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.25rem' }}>
                   <span style={{ fontSize: '0.7rem', fontWeight: 700, color: 'var(--accent-cyan)', textTransform: 'uppercase' }}>
                     {log.action}
@@ -190,7 +190,7 @@ export default function Dashboard({ onSelectIncident, onOpenNewIncident }) {
                     {new Date(log.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                   </span>
                 </div>
-                <div style={{ fontSize: '0.8rem', color: '#e2e8f0', marginBottom: '0.2rem' }}>
+                <div style={{ fontSize: '0.8rem', color: '#0f172a', marginBottom: '0.2rem' }}>
                   {log.details}
                 </div>
                 <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>

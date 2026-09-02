@@ -147,7 +147,7 @@ export default function Incidents({ onSelectIncident, onOpenNewIncident, onMetri
               {filtered.map(inc => (
                 <tr key={inc._id || inc.id}>
                   <td style={{ fontWeight: 700, color: 'var(--accent-cyan)' }}>{inc.ticket_number}</td>
-                  <td style={{ fontWeight: 600, color: '#ffffff' }}>{inc.title}</td>
+                  <td style={{ fontWeight: 600, color: '#0f172a' }}>{inc.title}</td>
                   <td style={{ color: 'var(--text-secondary)' }}>{inc.category}</td>
                   <td>
                     <span className={`badge badge-${inc.priority ? inc.priority.toLowerCase() : 'p3'}`}>

@@ -36,7 +36,7 @@ export default function IncidentDetailModal({ incident, onClose, onResolveWithAI
         </div>
 
         <div className="modal-body">
-          <h2 style={{ fontSize: '1.15rem', fontWeight: 700, color: '#ffffff', marginBottom: '0.5rem' }}>
+          <h2 style={{ fontSize: '1.15rem', fontWeight: 700, color: '#0f172a', marginBottom: '0.5rem' }}>
             {incident.title}
           </h2>
           <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '1.25rem', lineHeight: 1.5 }}>
@@ -44,7 +44,7 @@ export default function IncidentDetailModal({ incident, onClose, onResolveWithAI
           </p>
 
           <div style={{
-            background: 'rgba(13, 17, 28, 0.8)',
+            background: '#f8fafc',
             border: '1px solid var(--border-color)',
             borderRadius: '10px',
             padding: '0.9rem 1.1rem',
@@ -55,15 +55,15 @@ export default function IncidentDetailModal({ incident, onClose, onResolveWithAI
             gridTemplateColumns: '1fr 1fr',
             gap: '0.6rem'
           }}>
-            <div><strong style={{ color: 'var(--text-muted)' }}>Impacted Service:</strong> <span style={{ color: '#ffffff', fontWeight: 600 }}>{incident.impacted_service || 'General API'}</span></div>
-            <div><strong style={{ color: 'var(--text-muted)' }}>Assigned Team:</strong> <span style={{ color: '#ffffff', fontWeight: 600 }}>{incident.assigned_team || 'Tier-1 IT Desk'}</span></div>
+            <div><strong style={{ color: 'var(--text-muted)' }}>Impacted Service:</strong> <span style={{ color: '#0f172a', fontWeight: 600 }}>{incident.impacted_service || 'General API'}</span></div>
+            <div><strong style={{ color: 'var(--text-muted)' }}>Assigned Team:</strong> <span style={{ color: '#0f172a', fontWeight: 600 }}>{incident.assigned_team || 'Tier-1 IT Desk'}</span></div>
             <div><strong style={{ color: 'var(--text-muted)' }}>Category:</strong> <span style={{ color: 'var(--accent-cyan)', fontWeight: 600 }}>{incident.category || 'Infrastructure'}</span></div>
             <div><strong style={{ color: 'var(--text-muted)' }}>AI Confidence:</strong> <span style={{ color: 'var(--accent-emerald)', fontWeight: 700 }}>{incident.ai_confidence || 94}%</span></div>
           </div>
 
           <div style={{
-            background: 'rgba(0, 242, 254, 0.06)',
-            border: '1px solid rgba(0, 242, 254, 0.25)',
+            background: 'rgba(2, 132, 199, 0.08)',
+            border: '1px solid rgba(2, 132, 199, 0.25)',
             borderRadius: '10px',
             padding: '1.1rem',
             marginBottom: '1.25rem'
@@ -72,7 +72,7 @@ export default function IncidentDetailModal({ incident, onClose, onResolveWithAI
               <Sparkles size={16} />
               AI Recommended Resolution Playbook
             </h3>
-            <p style={{ fontSize: '0.82rem', color: '#e2e8f0', whiteSpace: 'pre-line', lineHeight: 1.5, fontFamily: 'monospace' }}>
+            <p style={{ fontSize: '0.82rem', color: '#0f172a', whiteSpace: 'pre-line', lineHeight: 1.5, fontFamily: 'monospace' }}>
               {incident.ai_suggested_resolution || '1. Verify service connectivity.\n2. Restart affected process queue.'}
             </p>
           </div>

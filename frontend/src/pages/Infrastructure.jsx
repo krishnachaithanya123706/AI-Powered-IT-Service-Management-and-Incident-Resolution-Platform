@@ -112,7 +112,7 @@ export default function Infrastructure({ onAlertSimulated, onMetricsUpdate }) {
               {assets.map(asset => (
                 <tr key={asset._id || asset.id}>
                   <td style={{ fontWeight: 700, color: 'var(--accent-cyan)' }}>{asset.asset_tag}</td>
-                  <td style={{ fontWeight: 600, color: '#ffffff' }}>{asset.name}</td>
+                  <td style={{ fontWeight: 600, color: '#0f172a' }}>{asset.name}</td>
                   <td style={{ color: 'var(--text-secondary)' }}>{asset.type}</td>
                   <td>
                     <span className="badge badge-cyan">{asset.environment}</span>
@@ -121,7 +121,7 @@ export default function Infrastructure({ onAlertSimulated, onMetricsUpdate }) {
                   <td style={{ fontSize: '0.8rem' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.2rem' }}>
                       <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>CPU: {asset.cpu_usage ?? 0}%</span>
-                      <div style={{ flex: 1, height: '4px', background: 'rgba(255,255,255,0.06)', borderRadius: '2px' }}>
+                      <div style={{ flex: 1, height: '4px', background: 'rgba(0,0,0,0.06)', borderRadius: '2px' }}>
                         <div style={{ height: '100%', width: `${asset.cpu_usage ?? 0}%`, background: asset.cpu_usage > 85 ? 'var(--accent-rose)' : 'var(--accent-cyan)', borderRadius: '2px' }} />
                       </div>
                     </div>

@@ -76,23 +76,23 @@ How can I assist your IT operations team today?`,
                   width: '34px',
                   height: '34px',
                   borderRadius: '50%',
-                  background: 'linear-gradient(135deg, #a855f7 0%, #7c3aed 100%)',
+                  background: 'linear-gradient(135deg, #9333ea 0%, #7e22ce 100%)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   flexShrink: 0,
-                  boxShadow: '0 0 12px rgba(168, 85, 247, 0.4)'
+                  boxShadow: '0 4px 12px rgba(147, 51, 234, 0.25)'
                 }}>
                   <Sparkles size={16} color="white" />
                 </div>
               )}
 
               <div style={{
-                background: msg.sender === 'user' ? 'rgba(0, 242, 254, 0.12)' : 'rgba(13, 17, 28, 0.85)',
-                border: msg.sender === 'user' ? '1px solid rgba(0, 242, 254, 0.3)' : '1px solid var(--border-color)',
+                background: msg.sender === 'user' ? 'rgba(2, 132, 199, 0.08)' : '#f8fafc',
+                border: msg.sender === 'user' ? '1px solid rgba(2, 132, 199, 0.25)' : '1px solid var(--border-color)',
                 borderRadius: '12px',
                 padding: '1rem 1.25rem',
-                color: '#f8fafc',
+                color: '#0f172a',
                 fontSize: '0.9rem',
                 lineHeight: 1.5,
                 whiteSpace: 'pre-wrap'
@@ -107,9 +107,9 @@ How can I assist your IT operations team today?`,
                         key={aIdx}
                         onClick={() => handleSend(action)}
                         style={{
-                          background: 'rgba(168, 85, 247, 0.15)',
-                          border: '1px solid rgba(168, 85, 247, 0.3)',
-                          color: '#c084fc',
+                          background: 'rgba(147, 51, 234, 0.1)',
+                          border: '1px solid rgba(147, 51, 234, 0.25)',
+                          color: '#7e22ce',
                           borderRadius: '16px',
                           padding: '0.3rem 0.85rem',
                           fontSize: '0.75rem',
@@ -130,20 +130,21 @@ How can I assist your IT operations team today?`,
                   width: '34px',
                   height: '34px',
                   borderRadius: '50%',
-                  background: 'rgba(255, 255, 255, 0.1)',
+                  background: '#f1f5f9',
+                  border: '1px solid #cbd5e1',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   flexShrink: 0
                 }}>
-                  <User size={16} color="#cbd5e1" />
+                  <User size={16} color="#475569" />
                 </div>
               )}
             </div>
           ))}
 
           {loading && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#c084fc', fontSize: '0.85rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#7e22ce', fontSize: '0.85rem' }}>
               <RefreshCw className="animate-spin" size={16} /> AI Operations Copilot is querying knowledge base & telemetry...
             </div>
           )}
@@ -153,7 +154,7 @@ How can I assist your IT operations team today?`,
         <div style={{
           padding: '1.25rem',
           borderTop: '1px solid var(--border-color)',
-          background: 'rgba(11, 15, 25, 0.9)',
+          background: '#f8fafc',
           display: 'flex',
           gap: '0.75rem'
         }}>

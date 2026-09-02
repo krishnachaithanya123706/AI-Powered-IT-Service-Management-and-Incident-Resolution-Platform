@@ -99,7 +99,7 @@ export default function ChangeManagement({ onOpenNewChange }) {
               {changes.map(chg => (
                 <tr key={chg._id || chg.id}>
                   <td style={{ fontWeight: 700, color: 'var(--accent-purple)' }}>{chg.change_number}</td>
-                  <td style={{ fontWeight: 600, color: '#ffffff' }}>{chg.title}</td>
+                  <td style={{ fontWeight: 600, color: '#0f172a' }}>{chg.title}</td>
                   <td>
                     <span className={`badge ${chg.risk_level === 'High' ? 'badge-high' : 'badge-medium'}`}>
                       {chg.risk_level}

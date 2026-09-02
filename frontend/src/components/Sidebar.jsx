@@ -49,17 +49,17 @@ export default function Sidebar({ activeTab, setActiveTab }) {
           width: '38px',
           height: '38px',
           borderRadius: '10px',
-          background: 'linear-gradient(135deg, #00f2fe 0%, #4facfe 100%)',
+          background: 'linear-gradient(135deg, #0284c7 0%, #2563eb 100%)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          color: '#0b0f19',
-          boxShadow: '0 0 15px rgba(0, 242, 254, 0.3)'
+          color: '#ffffff',
+          boxShadow: '0 4px 12px rgba(2, 132, 199, 0.25)'
         }}>
           <Zap size={22} strokeWidth={2.5} />
         </div>
         <div>
-          <h2 style={{ fontSize: '1.05rem', fontWeight: 800, color: '#ffffff', letterSpacing: '-0.02em', lineHeight: 1.1 }}>
+          <h2 style={{ fontSize: '1.05rem', fontWeight: 800, color: '#0f172a', letterSpacing: '-0.02em', lineHeight: 1.1 }}>
             Nexus ITSM
           </h2>
           <span style={{ fontSize: '0.7rem', fontWeight: 600, color: 'var(--accent-cyan)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
@@ -99,9 +99,9 @@ export default function Sidebar({ activeTab, setActiveTab }) {
                   padding: '0.65rem 0.85rem',
                   borderRadius: '8px',
                   border: '1px solid',
-                  borderColor: isActive ? 'rgba(0, 242, 254, 0.3)' : 'transparent',
-                  background: isActive ? 'rgba(0, 242, 254, 0.1)' : 'transparent',
-                  color: isActive ? '#ffffff' : 'var(--text-secondary)',
+                  borderColor: isActive ? 'rgba(2, 132, 199, 0.3)' : 'transparent',
+                  background: isActive ? 'rgba(2, 132, 199, 0.08)' : 'transparent',
+                  color: isActive ? '#0284c7' : 'var(--text-secondary)',
                   fontWeight: isActive ? 700 : 500,
                   fontSize: '0.85rem',
                   cursor: 'pointer',
@@ -119,7 +119,7 @@ export default function Sidebar({ activeTab, setActiveTab }) {
                     fontWeight: 800,
                     padding: '0.15rem 0.4rem',
                     borderRadius: '4px',
-                    background: 'linear-gradient(135deg, #a855f7 0%, #7c3aed 100%)',
+                    background: 'linear-gradient(135deg, #9333ea 0%, #7e22ce 100%)',
                     color: '#ffffff',
                     textTransform: 'uppercase'
                   }}>
@@ -137,7 +137,7 @@ export default function Sidebar({ activeTab, setActiveTab }) {
         marginTop: 'auto',
         padding: '0.85rem',
         borderRadius: '10px',
-        background: 'rgba(255, 255, 255, 0.03)',
+        background: '#f8fafc',
         border: '1px solid var(--border-color)',
         display: 'flex',
         alignItems: 'center',
@@ -151,7 +151,7 @@ export default function Sidebar({ activeTab, setActiveTab }) {
           boxShadow: '0 0 8px var(--accent-emerald)'
         }} className="pulse-glow" />
         <div style={{ flex: 1 }}>
-          <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#ffffff' }}>System Active</div>
+          <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#0f172a' }}>System Active</div>
           <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>SQLite / In-Memory DB</div>
         </div>
         <Activity size={16} color="var(--accent-cyan)" />
